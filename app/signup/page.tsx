@@ -14,6 +14,8 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { register } from "@/actions/auth";
+import { useAppDispatch } from "@/hooks/useDispatch";
+import { setCredentials } from "@/features/auth/authSlice";
 
 // interface ErrorResponse {
 //   message: string;
@@ -31,6 +33,7 @@ export default function RegisterPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
 
   interface ErrorResponse {
     message: string;
@@ -52,6 +55,12 @@ export default function RegisterPage() {
       if (data.success) {
         // router.push("/login");
         setError("");
+
+        // Store only token
+        localStorage.setItem("token", data.token);
+
+        // User in Redux
+        dispatch(setCredentials(data.user));
       }
     } catch (error: unknown) {
       // Type guard for AxiosError

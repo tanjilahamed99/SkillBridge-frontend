@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { login } from "@/actions/auth";
 import { AxiosError } from "axios";
+import { useAppDispatch } from "@/hooks/useDispatch";
+import { setCredentials } from "@/features/auth/authSlice";
 
 interface ErrorResponse {
   message: string;
   errors?: Record<string, string[]>;
 }
-
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function LoginPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +34,13 @@ export default function LoginPage() {
       const { data } = await login(formData.email, formData.password);
       console.log(data);
 
-      if (data.success) {
-        // router.push("/login");
-        setError("");
-      }
+      // router.push("/login");
+      setError("");
+      // Store only token
+      localStorage.setItem("token", data.token);
+
+      // User in Redux
+      dispatch(setCredentials(data.user));
     } catch (error: unknown) {
       // Type guard for AxiosError
       if (error instanceof AxiosError) {
@@ -164,6 +169,8 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
+
+            <p className="text-red-500 text-sm">{error}</p>
 
             {/* Submit Button */}
             <button
