@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: process.env.VITE_BACKEND_URL,
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
 });
 
 const Navigate = (path: string) => {

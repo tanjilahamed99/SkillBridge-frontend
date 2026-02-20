@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -12,6 +13,12 @@ import {
   ArrowRight,
   GraduationCap,
 } from "lucide-react";
+import { register } from "@/actions/auth";
+
+// interface ErrorResponse {
+//   message: string;
+//   errors?: Record<string, string[]>;
+// }
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,16 +30,52 @@ export default function RegisterPage() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  interface ErrorResponse {
+    message: string;
+    errors?: Record<string, string[]>;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(""); // Clear previous errors
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const { data } = await register({
+        ...formData,
+        role,
+      });
+      console.log(data);
+
+      if (data.success) {
+        // router.push("/login");
+        setError("");
+      }
+    } catch (error: unknown) {
+      // Type guard for AxiosError
+      if (error instanceof AxiosError) {
+        // Server responded with error
+        const errorData = error.response?.data as ErrorResponse;
+        setError(errorData?.message || error.message || "Registration failed");
+
+        // Log full error for debugging
+        console.log("Error details:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+        });
+      } else if (error instanceof Error) {
+        // Non-Axios error
+        setError(error.message);
+      } else {
+        // Unknown error
+        setError("An unexpected error occurred");
+      }
+    } finally {
       setIsLoading(false);
-      router.push("/login");
-    }, 1000);
+    }
   };
 
   return (
@@ -195,6 +238,8 @@ export default function RegisterPage() {
                 </>
               )}
             </button>
+
+            <p className="text-red-500 text-sm mt-2">{error}</p>
 
             {/* Login Link */}
             <p className="text-center text-gray-600 text-sm">
