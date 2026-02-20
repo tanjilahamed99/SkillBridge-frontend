@@ -1,5 +1,5 @@
 "use client";
-import { Cloud, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import Logo from "./Logo";
@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200 group-hover:shadow-purple-300 transition-all group-hover:scale-110">
+            <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200 group-hover:shadow-purple-300 transition-all group-hover:scale-110">
               <Logo />
             </div>
             <span className="font-bold text-2xl text-gray-900">

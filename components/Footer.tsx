@@ -1,171 +1,116 @@
-import { Cloud } from "lucide-react";
+import {
+  ChevronRight,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Youtube,
+  Instagram,
+} from "lucide-react";
 import Link from "next/link";
+import Logo from "./Logo";
 
 const Footer = () => {
   return (
-    <footer className="bg-neutral-950 text-white py-16">
+    <footer className="bg-gray-900 text-white py-16 border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
-                <Cloud className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center">
+                <Logo />
               </div>
-              <span className="font-bold text-xl text-white">SkillBridge</span>
+              <span className="font-bold text-2xl">
+                Skill<span className="text-purple-400">Bridge</span>
+              </span>
             </div>
-            <p className="text-neutral-400 text-sm leading-relaxed mb-4">
+            <p className="text-gray-400 text-lg leading-relaxed mb-6">
               Bridging the gap between where you are and where you want to be.
-              We provide world-class education under one sky.
+              We provide world-class education for career growth.
             </p>
             <div className="flex space-x-4">
-              {["T", "F", "L", "Y"].map((social, index) => (
-                <div
-                  key={index}
-                  className="w-10 h-10 bg-neutral-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition cursor-pointer">
-                  <span className="text-neutral-400 text-sm hover:text-white">
-                    {social}
-                  </span>
-                </div>
-              ))}
+              {[Facebook, Twitter, Linkedin, Youtube, Instagram].map(
+                (Icon, index) => (
+                  <div
+                    key={index}
+                    className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-purple-600 transition cursor-pointer group">
+                    <Icon className="w-5 h-5 text-gray-400 group-hover:text-white" />
+                  </div>
+                ),
+              )}
             </div>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Platform</h4>
-            <ul className="space-y-2 text-neutral-400">
-              <li>
-                <Link
-                  href="/courses"
-                  className="hover:text-primary-400 transition">
-                  Courses
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/features"
-                  className="hover:text-primary-400 transition">
-                  Features
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/pricing"
-                  className="hover:text-primary-400 transition">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/instructors"
-                  className="hover:text-primary-400 transition">
-                  Instructors
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/enterprise"
-                  className="hover:text-primary-400 transition">
-                  Enterprise
-                </Link>
-              </li>
+            <h4 className="font-bold text-lg mb-6">Platform</h4>
+            <ul className="space-y-4">
+              {[
+                "Courses",
+                "Features",
+                "Pricing",
+                "Instructors",
+                "Enterprise",
+              ].map((item) => (
+                <li key={item}>
+                  <Link
+                    href={`/${item.toLowerCase()}`}
+                    className="text-gray-400 hover:text-purple-400 transition flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4" />
+                    {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
-            <ul className="space-y-2 text-neutral-400">
-              <li>
-                <Link
-                  href="/about"
-                  className="hover:text-primary-400 transition">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/careers"
-                  className="hover:text-primary-400 transition">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/blog"
-                  className="hover:text-primary-400 transition">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/press"
-                  className="hover:text-primary-400 transition">
-                  Press
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="hover:text-primary-400 transition">
-                  Contact
-                </Link>
-              </li>
+            <h4 className="font-bold text-lg mb-6">Company</h4>
+            <ul className="space-y-4">
+              {["About", "Careers", "Blog", "Press", "Contact"].map((item) => (
+                <li key={item}>
+                  <Link
+                    href={`/${item.toLowerCase()}`}
+                    className="text-gray-400 hover:text-purple-400 transition flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4" />
+                    {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
-            <ul className="space-y-2 text-neutral-400">
-              <li>
-                <Link
-                  href="/privacy"
-                  className="hover:text-primary-400 transition">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terms"
-                  className="hover:text-primary-400 transition">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/security"
-                  className="hover:text-primary-400 transition">
-                  Security
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/cookies"
-                  className="hover:text-primary-400 transition">
-                  Cookie Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/accessibility"
-                  className="hover:text-primary-400 transition">
-                  Accessibility
-                </Link>
-              </li>
+            <h4 className="font-bold text-lg mb-6">Legal</h4>
+            <ul className="space-y-4">
+              {[
+                "Privacy Policy",
+                "Terms-of-Service",
+                "Security",
+                "Cookie Policy",
+                "Accessibility",
+              ].map((item) => (
+                <li key={item}>
+                  <Link
+                    href={`/${item.toLowerCase().replace(" ", "-")}`}
+                    className="text-gray-400 hover:text-purple-400 transition flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4" />
+                    {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-neutral-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-neutral-400 text-sm">
-          <p>
-            &copy; {new Date().getFullYear()} SkillBridge. All rights reserved.
-          </p>
+        <div className="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-400">
+          <p>&copy; 2024 SkillBridge. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link href="/sitemap" className="hover:text-primary-400 transition">
+            <Link href="/sitemap" className="hover:text-purple-400 transition">
               Sitemap
             </Link>
-            <Link href="/privacy" className="hover:text-primary-400 transition">
+            <Link href="/privacy" className="hover:text-purple-400 transition">
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-primary-400 transition">
+            <Link href="/terms" className="hover:text-purple-400 transition">
               Terms
             </Link>
           </div>
