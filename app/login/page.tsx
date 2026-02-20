@@ -3,13 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-} from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { login } from "@/actions/auth";
+import { AxiosError } from "axios";
+
+interface ErrorResponse {
+  message: string;
+  errors?: Record<string, string[]>;
+}
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,12 +21,44 @@ export default function LoginPage() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(""); // Clear previous errors
 
-    // Simulate API call
+    try {
+      const { data } = await login(formData.email, formData.password);
+      console.log(data);
+
+      if (data.success) {
+        // router.push("/login");
+        setError("");
+      }
+    } catch (error: unknown) {
+      // Type guard for AxiosError
+      if (error instanceof AxiosError) {
+        // Server responded with error
+        const errorData = error.response?.data as ErrorResponse;
+        setError(errorData?.message || error.message || "Registration failed");
+
+        // Log full error for debugging
+        console.log("Error details:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+        });
+      } else if (error instanceof Error) {
+        // Non-Axios error
+        setError(error.message);
+      } else {
+        // Unknown error
+        setError("An unexpected error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
