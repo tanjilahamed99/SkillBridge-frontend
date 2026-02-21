@@ -16,6 +16,7 @@ import {
 import { register } from "@/actions/auth";
 import { useAppDispatch } from "@/hooks/useDispatch";
 import { setCredentials } from "@/features/auth/authSlice";
+import { toast } from "sonner";
 
 // interface ErrorResponse {
 //   message: string;
@@ -43,43 +44,30 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(""); // Clear previous errors
+    setError("");
 
     try {
       const { data } = await register({
         ...formData,
         role,
       });
-      console.log(data);
-
-      if (data.success) {
-        // router.push("/login");
-        setError("");
-
-        // Store only token
-        localStorage.setItem("token", data.token);
-
-        // User in Redux
-        dispatch(setCredentials(data.user));
-      }
+      setError("");
+      localStorage.setItem("token", data.token);
+      dispatch(setCredentials(data.user));
+      toast.success("Registration successful 🎉");
+      router.push("/dashboard");
     } catch (error: unknown) {
-      // Type guard for AxiosError
       if (error instanceof AxiosError) {
-        // Server responded with error
         const errorData = error.response?.data as ErrorResponse;
         setError(errorData?.message || error.message || "Registration failed");
-
-        // Log full error for debugging
         console.log("Error details:", {
           status: error.response?.status,
           data: error.response?.data,
           message: error.message,
         });
       } else if (error instanceof Error) {
-        // Non-Axios error
         setError(error.message);
       } else {
-        // Unknown error
         setError("An unexpected error occurred");
       }
     } finally {

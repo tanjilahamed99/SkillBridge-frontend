@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { login } from "@/actions/auth";
 import { AxiosError } from "axios";
-import { useAppDispatch } from "@/hooks/useDispatch";
+import { useAppDispatch, useAppSelector } from "@/hooks/useDispatch";
 import { setCredentials } from "@/features/auth/authSlice";
 import { toast } from "sonner";
 
@@ -18,6 +18,7 @@ interface ErrorResponse {
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const user = useAppSelector((state) => state.auth.user);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -56,6 +57,10 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  // if (user) {
+  //   return router.push("/dashboard");
+  // }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-purple-50">
