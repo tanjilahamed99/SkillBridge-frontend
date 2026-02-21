@@ -4,15 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Menu,
   X,
   Home,
   BookOpen,
-  MessageCircle,
   LogOut,
-  Bell,
-  Search,
-  ChevronDown,
   GraduationCap,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useDispatch";

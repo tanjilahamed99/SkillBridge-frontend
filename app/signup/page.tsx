@@ -18,15 +18,10 @@ import { useAppDispatch } from "@/hooks/useDispatch";
 import { setCredentials } from "@/features/auth/authSlice";
 import { toast } from "sonner";
 
-// interface ErrorResponse {
-//   message: string;
-//   errors?: Record<string, string[]>;
-// }
-
 export default function RegisterPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState<"student" | "teacher">("student");
+  const [role, setRole] = useState<"student" | "instructor">("student");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -114,14 +109,14 @@ export default function RegisterPage() {
               Student
             </button>
             <button
-              onClick={() => setRole("teacher")}
+              onClick={() => setRole("instructor")}
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition ${
-                role === "teacher"
+                role === "instructor"
                   ? "bg-purple-600 text-white shadow-md"
                   : "text-gray-600"
               }`}>
               <GraduationCap className="w-4 h-4" />
-              Teacher
+              Instructor
             </button>
           </div>
 

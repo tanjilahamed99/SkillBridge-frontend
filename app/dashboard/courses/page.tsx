@@ -14,7 +14,6 @@ import {
   AlertCircle,
   Star,
   Users,
-  Download,
 } from "lucide-react";
 
 export default function StudentCourses() {
