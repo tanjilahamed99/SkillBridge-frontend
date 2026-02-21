@@ -318,7 +318,7 @@ export default function StudentCourses() {
           </div>
 
           {/* Status Filters */}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {(['all', 'active', 'completed', 'dropped'] as const).map((status) => (
               <button
                 key={status}
@@ -594,12 +594,12 @@ export default function StudentCourses() {
                             <Download className="w-4 h-4 mr-2" />
                             Certificate
                           </Link>
-                        )}
+                        )} */}
                         {course.status === 'dropped' && (
                           <button className="bg-gray-100 text-gray-600 px-6 py-2 rounded-xl font-medium hover:bg-gray-200 transition">
                             Re-enroll
                           </button>
-                        )} */}
+                        )}
                       </div>
                     </div>
 
