@@ -15,7 +15,7 @@ const AdminPrivateRoute = ({ children }: { children: React.ReactNode }) => {
     case "instructor":
       return router.push("/instructor");
 
-    case "user":
+    case "student":
       return router.push("/dashboard");
 
     case "superAdmin":

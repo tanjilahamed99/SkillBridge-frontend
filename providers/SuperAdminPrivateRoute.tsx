@@ -19,7 +19,7 @@ const SuperAdminPrivateRoute = ({
     case "instructor":
       return router.push("/instructor");
 
-    case "user":
+    case "student":
       return router.push("/dashboard");
 
     case "superAdmin":
