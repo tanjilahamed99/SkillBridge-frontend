@@ -190,67 +190,6 @@ export default function StudentLayout({
 
         {/* Main Content */}
         <div className="lg:pl-72">
-          {/* Header */}
-          <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-purple-100">
-            <div className="flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8">
-              {/* Left side */}
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden text-gray-600 hover:text-purple-600">
-                  <Menu className="w-6 h-6" />
-                </button>
-
-                {/* Search Bar */}
-                <div className="hidden md:flex items-center relative">
-                  <Search className="absolute left-3 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search courses..."
-                    className="w-80 pl-10 pr-4 py-2 border border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Right side */}
-              <div className="flex items-center gap-3">
-                {/* Notifications */}
-                <button className="relative p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition">
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
-
-                {/* Messages */}
-                <button className="relative p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition">
-                  <MessageCircle className="w-5 h-5" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-purple-600 rounded-full"></span>
-                </button>
-
-                {/* Profile Dropdown */}
-                <div className="relative">
-                  <button className="flex items-center gap-2 p-2 hover:bg-purple-50 rounded-xl transition">
-                    <div className="w-8 h-8 bg-linear-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center text-white font-semibold">
-                      JD
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-gray-500" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Search - Visible only on small screens */}
-            <div className="md:hidden px-4 pb-4">
-              <div className="flex items-center relative">
-                <Search className="absolute left-3 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search courses..."
-                  className="w-full pl-10 pr-4 py-2 border border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none"
-                />
-              </div>
-            </div>
-          </header>
-
           {/* Page Content */}
           <main className="p-4 sm:p-6 lg:p-8">{children}</main>
         </div>
