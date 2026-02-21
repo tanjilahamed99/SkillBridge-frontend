@@ -1,0 +1,32 @@
+import { useAppSelector } from "@/hooks/useDispatch";
+import { useRouter } from "next/navigation";
+
+const StudentPrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const user = useAppSelector((state) => state.auth.user);
+  const router = useRouter();
+
+  // Not logged in
+  if (!user) {
+    return router.push("/login");
+  }
+
+  // Role-based redirect
+  switch (user.role) {
+    case "instructor":
+      return router.push("/instructor");
+
+    case "user":
+      return children;
+
+    case "superAdmin":
+      return router.push("/superAdmin");
+
+    case "admin":
+      return router.push("/admin");
+
+    default:
+      return router.push("/login");
+  }
+};
+
+export default StudentPrivateRoute;
