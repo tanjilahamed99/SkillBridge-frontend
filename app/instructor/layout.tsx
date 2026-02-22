@@ -2,17 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  Menu,
-  X,
-  Home,
-  BookOpen,
-  LogOut,
-  Upload,
-} from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X, Home, BookOpen, LogOut, Upload } from "lucide-react";
 import { useAppSelector } from "@/hooks/useDispatch";
 import Logo from "@/components/Logo";
+import { useDispatch } from "react-redux";
+import { logout } from "@/features/auth/authSlice";
+import { toast } from "sonner";
 
 export default function InstructorLayout({
   children,
@@ -22,6 +18,8 @@ export default function InstructorLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const navigation = [
     { name: "Dashboard", href: "/instructor", icon: Home },
@@ -33,6 +31,13 @@ export default function InstructorLayout({
       badge: "New",
     },
   ];
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    router.push("/login");
+    toast.success("Logged out successfully");
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-purple-50">
@@ -123,7 +128,9 @@ export default function InstructorLayout({
 
         {/* Logout Button */}
         <div className="p-4 border-t border-purple-100">
-          <button className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition">
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
           </button>
