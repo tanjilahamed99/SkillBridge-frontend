@@ -18,29 +18,23 @@ export default function InstructorDashboard() {
   const stats = [
     {
       label: "Total Courses",
-      value: "8",
+      value: user.createdCourses?.length || 0,
       icon: BookOpen,
       change: "+2",
       color: "bg-purple-500",
     },
     {
       label: "Total Students",
-      value: "1,234",
+      value:
+        user.createdCourses?.reduce(
+          (acc, course) => acc + (course.students || 0),
+          0,
+        ) || 0,
       icon: Users,
       change: "+156",
       color: "bg-blue-500",
     },
-    {
-      label: "Monthly Revenue",
-      value: "$4,250",
-      icon: DollarSign,
-      change: "+$850",
-      color: "bg-green-500",
-    },
   ];
-
-  console.log(user.createdCourses);
-
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -169,12 +163,6 @@ export default function InstructorDashboard() {
                           <p className="text-xs text-gray-500">Students</p>
                           <p className="font-semibold text-gray-900">
                             {course.students}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500">Revenue</p>
-                          <p className="font-semibold text-gray-900">
-                            ${course.revenue}
                           </p>
                         </div>
                       </div>

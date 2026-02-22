@@ -25,9 +25,10 @@ import {
   Layers,
 } from "lucide-react";
 import { createCurse } from "@/actions/instructor";
-import { useAppSelector } from "@/hooks/useDispatch";
+import { useAppDispatch, useAppSelector } from "@/hooks/useDispatch";
 import { toast } from "sonner";
 import Image from "next/image";
+import { updateUser } from "@/features/auth/authSlice";
 
 export default function CreateCourse() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function CreateCourse() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const user = useAppSelector((state) => state.auth.user);
   const [error, setError] = useState("");
-
+  const dispatch = useAppDispatch();
   const [courseData, setCourseData] = useState({
     title: "",
     description: "",
@@ -225,6 +226,11 @@ export default function CreateCourse() {
       if (data.success) {
         router.push(`/instructor/courses`);
         toast.success("Course created successfully");
+        dispatch(
+          updateUser({
+            createdCourses: [...user.createdCourses, data.data],
+          }),
+        );
       }
     } catch (error) {
       console.error("Error creating course:", error);
