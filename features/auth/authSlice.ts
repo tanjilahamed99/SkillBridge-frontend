@@ -8,6 +8,8 @@ export interface User {
   phone?: string;
   role?: string;
   createdAt?: string;
+  enrolledCourses?: string[];
+  createdCourses?: string[];
 }
 
 interface AuthState {

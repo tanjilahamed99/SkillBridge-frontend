@@ -4,7 +4,6 @@ import {
   BookOpen,
   Users,
   DollarSign,
-  Star,
   Clock,
   MoreHorizontal,
   CheckCircle,
@@ -12,6 +11,7 @@ import {
   Upload,
 } from "lucide-react";
 import { useAppSelector } from "@/hooks/useDispatch";
+import Image from "next/image";
 
 export default function InstructorDashboard() {
   const user = useAppSelector((state) => state.auth.user);
@@ -39,48 +39,8 @@ export default function InstructorDashboard() {
     },
   ];
 
-  const recentCourses = [
-    {
-      id: 1,
-      title: "Complete Web Development Bootcamp",
-      students: 456,
-      revenue: 6840,
-      rating: 4.9,
-      status: "published",
-      lastUpdated: "2 days ago",
-      thumbnail: "from-blue-500 to-purple-600",
-    },
-    {
-      id: 2,
-      title: "Advanced JavaScript: From Zero to Hero",
-      students: 234,
-      revenue: 3510,
-      rating: 4.8,
-      status: "published",
-      lastUpdated: "5 days ago",
-      thumbnail: "from-yellow-500 to-orange-600",
-    },
-    {
-      id: 3,
-      title: "UI/UX Design Masterclass",
-      students: 189,
-      revenue: 2835,
-      rating: 4.7,
-      status: "draft",
-      lastUpdated: "1 week ago",
-      thumbnail: "from-purple-500 to-pink-600",
-    },
-    {
-      id: 4,
-      title: "React Native Mobile Development",
-      students: 0,
-      revenue: 0,
-      rating: 0,
-      status: "pending",
-      lastUpdated: "3 days ago",
-      thumbnail: "from-cyan-500 to-blue-600",
-    },
-  ];
+  console.log(user.createdCourses);
+
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -113,7 +73,7 @@ export default function InstructorDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user.name} 👋
+            Welcome back, {user?.name} 👋
           </h1>
           <p className="text-gray-600 mt-1">
             Here&apos;s what&apos;s happening with your courses today
@@ -175,13 +135,17 @@ export default function InstructorDashboard() {
             </div>
 
             <div className="divide-y divide-purple-100">
-              {recentCourses.map((course) => (
-                <div
-                  key={course.id}
-                  className="p-6 hover:bg-purple-50 transition">
+              {user.createdCourses?.map((course, idx) => (
+                <div key={idx} className="p-6 hover:bg-purple-50 transition">
                   <div className="flex flex-col md:flex-row gap-4">
-                    <div
-                      className={`md:w-32 h-20 bg-linear-to-r ${course.thumbnail} rounded-xl shrink-0`}></div>
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${course.thumbnail}`}
+                      width={500}
+                      height={500}
+                      alt="Course thumbnail"
+                      className="md:w-32 h-20 bg-gray-200 rounded-xl shrink-0"
+                      unoptimized={true}
+                    />
                     <div className="flex-1">
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
                         <div>
@@ -214,21 +178,6 @@ export default function InstructorDashboard() {
                           </p>
                         </div>
                       </div>
-
-                      {/* Progress Bar for course completion (if applicable) */}
-                      {course.status === "published" && (
-                        <div className="mt-3">
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-gray-500">
-                              Course Progress
-                            </span>
-                            <span className="text-gray-700">75%</span>
-                          </div>
-                          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                            <div className="w-3/4 h-full bg-linear-to-r from-purple-500 to-purple-600 rounded-full"></div>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

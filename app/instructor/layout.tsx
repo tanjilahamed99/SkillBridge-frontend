@@ -33,10 +33,11 @@ export default function InstructorLayout({
   ];
 
   const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
     router.push("/login");
     toast.success("Logged out successfully");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    dispatch(logout());
   };
 
   return (
