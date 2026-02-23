@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import {
   ArrowLeft,
   Save,
@@ -21,8 +21,9 @@ import {
   BookOpen,
   Layers,
   ChevronUp,
+  Loader2,
 } from "lucide-react";
-import { createCurse } from "@/actions/instructor";
+import { getCourseById, updateCourse } from "@/actions/instructor";
 import { useAppDispatch, useAppSelector } from "@/hooks/useDispatch";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -33,8 +34,38 @@ interface User {
   createdCourses?: Array<{ _id: string }>;
 }
 
-export default function CreateCourse() {
+interface Lesson {
+  title: string;
+  description: string;
+  duration: string;
+  type: string;
+  order: number;
+  _id?: string;
+}
+
+interface CourseData {
+  _id?: string;
+  title: string;
+  description: string;
+  category: string;
+  level: string;
+  language: string;
+  price: number;
+  isFree: boolean;
+  status: string;
+  tags: string[];
+  prerequisites: string[];
+  objectives: string[];
+  thumbnail: string | null;
+  lessons?: Lesson[];
+}
+
+export default function EditCourse() {
   const router = useRouter();
+  const params = useParams();
+  const courseId = params.id as string;
+
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("basic");
   const [isSaving, setIsSaving] = useState(false);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
@@ -43,7 +74,8 @@ export default function CreateCourse() {
   const user = useAppSelector((state) => state.auth.user) as User | null;
   const [error, setError] = useState("");
   const dispatch = useAppDispatch();
-  const [courseData, setCourseData] = useState({
+
+  const [courseData, setCourseData] = useState<CourseData>({
     title: "",
     description: "",
     category: "",
@@ -52,13 +84,13 @@ export default function CreateCourse() {
     price: 49.99,
     isFree: false,
     status: "draft",
-    tags: [] as string[],
+    tags: [],
     prerequisites: ["", "", ""],
     objectives: ["", "", "", ""],
-    thumbnail: null as File | null,
+    thumbnail: null,
   });
 
-  const [lessons, setLessons] = useState([
+  const [lessons, setLessons] = useState<Lesson[]>([
     {
       title: "",
       description: "",
@@ -82,6 +114,65 @@ export default function CreateCourse() {
     "Music",
   ];
 
+  // Fetch course data on component mount
+  useEffect(() => {
+    const fetchCourse = async () => {
+      if (!courseId) return;
+
+      setLoading(true);
+      try {
+        const response = await getCourseById(courseId);
+
+        if (response?.data?.success && response.data.data) {
+          const course = response.data.data;
+
+          // Populate form with existing course data
+          setCourseData({
+            title: course.title || "",
+            description: course.description || "",
+            category: course.category || "",
+            level: course.level || "beginner",
+            language: course.language || "english",
+            price: course.price || 49.99,
+            isFree: course.isFree || false,
+            status: course.status || "draft",
+            tags: course.tags || [],
+            prerequisites: course.prerequisites?.length
+              ? course.prerequisites
+              : ["", "", ""],
+            objectives: course.objectives?.length
+              ? course.objectives
+              : ["", "", "", ""],
+            thumbnail: course.thumbnail || null,
+          });
+
+          // Set lessons if they exist
+          if (course.lessons?.length) {
+            setLessons(course.lessons);
+          }
+
+          // Set thumbnail preview if exists
+          if (course.thumbnail) {
+            setThumbnailPreview(
+              `${process.env.NEXT_PUBLIC_API_URL}/uploads/${course.thumbnail}`,
+            );
+          }
+        } else {
+          toast.error("Course not found");
+          router.push("/instructor/courses");
+        }
+      } catch (error) {
+        console.error("Error fetching course:", error);
+        toast.error("Failed to load course data");
+        router.push("/instructor/courses");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [courseId, router]);
+
   const validateBasicInfo = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -101,7 +192,8 @@ export default function CreateCourse() {
       newErrors.category = "Please select a category";
     }
 
-    if (!thumbnailFile) {
+    // Thumbnail is optional for editing (only required if no existing thumbnail)
+    if (!thumbnailFile && !courseData.thumbnail) {
       newErrors.thumbnail = "Course thumbnail is required";
     }
 
@@ -131,13 +223,13 @@ export default function CreateCourse() {
     if (file) {
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        alert("Please upload an image file");
+        toast.error("Please upload an image file");
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        toast.error("File size must be less than 5MB");
         return;
       }
 
@@ -202,42 +294,113 @@ export default function CreateCourse() {
       formData.append("tags", JSON.stringify(courseData.tags));
       formData.append(
         "prerequisites",
-        JSON.stringify(courseData.prerequisites),
+        JSON.stringify(courseData.prerequisites.filter((p) => p.trim() !== "")),
       );
-      formData.append("objectives", JSON.stringify(courseData.objectives));
+      formData.append(
+        "objectives",
+        JSON.stringify(courseData.objectives.filter((o) => o.trim() !== "")),
+      );
+
       if (thumbnailFile) {
         formData.append("thumbnail", thumbnailFile);
       }
-      const { data } = await createCurse(user._id, formData);
-      if (data.success) {
-        // Extract only the fields you want to store
-        const courseData = data.data;
 
-        const courseToStore = {
-          courseId: courseData._id,
-          _id: courseData._id,
-          status: courseData.status || "draft",
-          thumbnail: courseData.thumbnail || null,
-          totalStudents: courseData.totalEnrollments || 0,
-          totalRevenue: 0,
-          title: courseData.title,
-        };
+      const response = await updateCourse(courseId, formData);
 
-        router.push(`/instructor/courses`);
-        toast.success("Course created successfully");
+      console.log(response);
 
-        dispatch(
-          updateUser({
-            createdCourses: [...(user.createdCourses || []), courseToStore],
-          }),
-        );
+      if (response?.data?.success) {
+        toast.success("Course updated successfully");
+
+        // Get the full course data from response
+        const updatedCourseData = response.data.data;
+
+        if (user) {
+          // Check if the course already exists in user's createdCourses
+          // Compare with either courseId or _id
+          const courseExists = user.createdCourses?.some(
+            (course) =>
+              course.courseId === updatedCourseData._id ||
+              course._id === updatedCourseData._id,
+          );
+
+          let updatedCourses;
+
+          if (courseExists) {
+            // Update existing course - PRESERVE the structure of user.createdCourses
+            updatedCourses = user.createdCourses.map((course) => {
+              // Check if this is the course we're updating
+              if (
+                course.courseId === updatedCourseData._id ||
+                course._id === updatedCourseData._id
+              ) {
+                // Return object with the SAME STRUCTURE as user.createdCourses
+                return {
+                  courseId: updatedCourseData._id, // Keep the courseId field
+                  _id: course._id || updatedCourseData._id, // Keep existing _id or use new one
+                  status: updatedCourseData.status || course.status,
+                  thumbnail: updatedCourseData.thumbnail || course.thumbnail,
+                  totalStudents:
+                    updatedCourseData.totalEnrollments ||
+                    course.totalStudents ||
+                    0,
+                  totalRevenue: course.totalRevenue || 0, // Keep existing revenue
+                  // Preserve any other fields that were in the original
+                  ...course, // Keep existing fields
+                  // Override with new data but only specific fields
+                  title: updatedCourseData.title, // Add title if needed
+                };
+              }
+              return course;
+            });
+          } else {
+            // Add new course to the array - match the structure of user.createdCourses
+            const newCourseEntry = {
+              courseId: updatedCourseData._id,
+              _id: updatedCourseData._id,
+              status: updatedCourseData.status || "draft",
+              thumbnail: updatedCourseData.thumbnail || null,
+              totalStudents: updatedCourseData.totalEnrollments || 0,
+              totalRevenue: 0,
+              title: updatedCourseData.title, // Add title if your structure supports it
+            };
+
+            updatedCourses = [...(user.createdCourses || []), newCourseEntry];
+          }
+
+          console.log("Updated courses to dispatch:", updatedCourses);
+            dispatch(updateUser({ createdCourses: updatedCourses }));
+        }
+
+        router.push("/instructor/courses");
       }
     } catch (error) {
-      console.error("Error creating course:", error);
+      console.error("Error updating course:", error);
       setError("An error occurred while saving the course. Please try again.");
+      toast.error("Failed to update course");
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const addLesson = () => {
+    const newLesson = {
+      title: "",
+      description: "",
+      duration: "00:00",
+      type: "video",
+      order: lessons.length + 1,
+    };
+    setLessons([...lessons, newLesson]);
+  };
+
+  const removeLesson = (index: number) => {
+    const newLessons = lessons.filter((_, i) => i !== index);
+    // Update orders
+    newLessons.forEach((lesson, i) => {
+      lesson.order = i + 1;
+    });
+    setLessons(newLessons);
   };
 
   const tabs = [
@@ -254,20 +417,16 @@ export default function CreateCourse() {
     },
   ];
 
-  const addLesson = () => {
-    const newLesson = {
-      title: "",
-      description: "",
-      duration: "00:00",
-      type: "video",
-      order: lessons.length + 1,
-    };
-    setLessons([...lessons, newLesson]);
-  };
-
-  const removeLesson = (title: unknown) => {
-    setLessons(lessons.filter((lesson) => lesson.title !== title));
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading course data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -283,10 +442,10 @@ export default function CreateCourse() {
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Create New Course
+                  Edit Course
                 </h1>
                 <p className="text-sm text-gray-500">
-                  Fill in the details to create your course
+                  Update your course information
                 </p>
               </div>
             </div>
@@ -304,13 +463,13 @@ export default function CreateCourse() {
                 className="bg-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-purple-700 transition shadow-lg shadow-purple-200 disabled:opacity-50 flex items-center gap-2">
                 {isSaving ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Saving...
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    Submit for Review
+                    Update Course
                   </>
                 )}
               </button>
@@ -340,7 +499,7 @@ export default function CreateCourse() {
           </div>
         </div>
 
-        {/* Tab Content */}
+        {/* Tab Content - Same as create page but with populated data */}
         <div className="bg-white rounded-2xl border border-purple-100 p-6 md:p-8">
           {activeTab === "basic" && (
             <div className="space-y-8">
@@ -413,7 +572,7 @@ export default function CreateCourse() {
                 )}
               </div>
 
-              {/* Category */}
+              {/* Category and Level */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -465,10 +624,14 @@ export default function CreateCourse() {
                   </select>
                 </div>
               </div>
+
               {/* Thumbnail Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Course Thumbnail <span className="text-red-500">*</span>
+                  Course Thumbnail{" "}
+                  {!courseData.thumbnail && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </label>
                 <div
                   className={`border-2 border-dashed rounded-xl p-8 transition ${
@@ -482,6 +645,7 @@ export default function CreateCourse() {
                         className="w-full h-64 object-cover rounded-xl shadow-lg"
                         width={512}
                         height={256}
+                        unoptimized={true}
                       />
                       <button
                         onClick={() => {
@@ -498,7 +662,7 @@ export default function CreateCourse() {
                         <Upload className="w-10 h-10 text-purple-600" />
                       </div>
                       <span className="text-purple-600 font-semibold text-lg">
-                        Click to upload
+                        Click to upload new thumbnail
                       </span>
                       <span className="text-sm text-gray-500 mt-2">
                         or drag and drop
@@ -640,7 +804,7 @@ export default function CreateCourse() {
                       <div
                         key={index}
                         className="bg-white border-2 border-purple-100 rounded-xl p-5 hover:border-purple-300 transition group">
-                        {/* Lesson Header with Drag Handle and Number */}
+                        {/* Lesson Header */}
                         <div className="flex items-center gap-3 mb-4">
                           <GripVertical className="w-5 h-5 text-gray-400 cursor-move" />
                           <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
@@ -711,7 +875,6 @@ export default function CreateCourse() {
                               <span className="text-xs text-gray-400">min</span>
                             </div>
 
-                            {/* Preview Toggle */}
                             {/* Lesson Type */}
                             <select
                               value={lesson.type}
@@ -744,7 +907,7 @@ export default function CreateCourse() {
                                 <ChevronDown className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => removeLesson(lesson.title)}
+                                onClick={() => removeLesson(index)}
                                 className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                 title="Delete lesson">
                                 <Trash2 className="w-4 h-4" />

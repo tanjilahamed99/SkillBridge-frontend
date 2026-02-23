@@ -8,7 +8,7 @@ export interface User {
   role?: string;
   createdAt?: string;
   enrolledCourses?: Array<string | { _id: string }>; // Accept both
-  createdCourses?: Array<string | { _id: string }>;  // Accept both
+  createdCourses?: Array<string | { _id: string }>; // Accept both
 }
 
 interface AuthState {
@@ -42,28 +42,19 @@ const authSlice = createSlice({
         localStorage.setItem("user", JSON.stringify(action.payload));
       }
     },
-
     logout: (state) => {
       state.user = null;
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
     },
-
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
-        // Normalize the data before saving
-        const updatedUser = { ...state.user, ...action.payload };
-        
-        // Ensure createdCourses is stored consistently
-        if (updatedUser.createdCourses) {
-          updatedUser.createdCourses = updatedUser.createdCourses.map(course => 
-            typeof course === 'object' && course !== null ? course._id : course
-          );
-        }
-        
-        state.user = updatedUser;
+        // Merge the new data with existing user data
+        // This preserves all nested objects including course details
+        state.user = { ...state.user, ...action.payload };
 
+        // Sync with localStorage
         if (typeof window !== "undefined") {
           localStorage.setItem("user", JSON.stringify(state.user));
         }

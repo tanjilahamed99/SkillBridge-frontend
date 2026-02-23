@@ -68,7 +68,7 @@ export default function InstructorCourses() {
 
       if (result.isConfirmed) {
         const response = await deleteCourse(id);
-        
+
         if (response?.data?.success) {
           await Swal.fire({
             title: "Deleted!",
@@ -79,7 +79,7 @@ export default function InstructorCourses() {
           // Update Redux state
           if (user && user.createdCourses) {
             const updatedCourses = user.createdCourses.filter(
-              (course) => course._id !== id
+              (course) => course._id !== id,
             );
             dispatch(updateUser({ createdCourses: updatedCourses }));
           }
@@ -100,12 +100,13 @@ export default function InstructorCourses() {
 
   // Filter and search courses
   const filteredCourses = coursesData
-    .filter((course) => 
-      filterStatus === "all" ? true : course.status === filterStatus
-    )
     .filter((course) =>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase())
+      filterStatus === "all" ? true : course.status === filterStatus,
+    )
+    .filter(
+      (course) =>
+        course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.description.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
   const getStatusBadge = (status: string) => {
@@ -152,9 +153,9 @@ export default function InstructorCourses() {
   // Calculate stats
   const stats = {
     total: coursesData.length,
-    published: coursesData.filter(c => c.status === "published").length,
-    pending: coursesData.filter(c => c.status === "pending").length,
-    draft: coursesData.filter(c => c.status === "draft").length,
+    published: coursesData.filter((c) => c.status === "published").length,
+    pending: coursesData.filter((c) => c.status === "pending").length,
+    draft: coursesData.filter((c) => c.status === "draft").length,
   };
 
   return (
@@ -264,10 +265,12 @@ export default function InstructorCourses() {
           <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookOpen className="w-10 h-10 text-purple-500" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">No courses found</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            No courses found
+          </h3>
           <p className="text-gray-500 mb-6">
-            {searchQuery 
-              ? "Try adjusting your search or filters" 
+            {searchQuery
+              ? "Try adjusting your search or filters"
               : "Start by creating your first course"}
           </p>
           {!searchQuery && (
@@ -304,7 +307,7 @@ export default function InstructorCourses() {
                         unoptimized={true}
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                      <div className="w-full h-full bg-linear-to-br from-purple-100 to-purple-200 flex items-center justify-center">
                         <BookOpen className="w-12 h-12 text-purple-400" />
                       </div>
                     )}
@@ -358,7 +361,7 @@ export default function InstructorCourses() {
                     {/* Action Buttons */}
                     <div className="flex gap-2">
                       <Link
-                        href={`/instructor/courses/${course._id}/edit`}
+                        href={`/instructor/courses/edit/${course._id}`}
                         className="flex-1 bg-purple-600 text-white py-2 rounded-xl font-medium hover:bg-purple-700 transition flex items-center justify-center gap-2">
                         <Edit className="w-4 h-4" />
                         Edit
@@ -371,16 +374,17 @@ export default function InstructorCourses() {
                     </div>
 
                     {/* Revenue (if published) */}
-                    {course.status === "published" && (course.revenue ?? 0) > 0 && (
-                      <div className="mt-3 pt-3 border-t border-gray-100">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Revenue</span>
-                          <span className="font-bold text-green-600">
-                            ${course.revenue}
-                          </span>
+                    {course.status === "published" &&
+                      (course.revenue ?? 0) > 0 && (
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-500">Revenue</span>
+                            <span className="font-bold text-green-600">
+                              ${course.revenue}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 </>
               ) : (
@@ -397,7 +401,7 @@ export default function InstructorCourses() {
                         unoptimized={true}
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                      <div className="w-full h-full bg-linear-to-br from-purple-100 to-purple-200 flex items-center justify-center">
                         <BookOpen className="w-8 h-8 text-purple-400" />
                       </div>
                     )}
@@ -439,16 +443,17 @@ export default function InstructorCourses() {
                           </span>
                         </div>
 
-                        {course.status === "published" && (course.revenue ?? 0) > 0 && (
-                          <p className="text-sm text-green-600 mt-2">
-                            Revenue: ${course.revenue}
-                          </p>
-                        )}
+                        {course.status === "published" &&
+                          (course.revenue ?? 0) > 0 && (
+                            <p className="text-sm text-green-600 mt-2">
+                              Revenue: ${course.revenue}
+                            </p>
+                          )}
                       </div>
 
                       <div className="flex lg:flex-col gap-2">
                         <Link
-                          href={`/instructor/courses/${course._id}/edit`}
+                          href={`/instructor/courses/edit/${course._id}`}
                           className="bg-purple-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-purple-700 transition flex items-center justify-center gap-2">
                           <Edit className="w-4 h-4" />
                           Edit

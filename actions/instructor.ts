@@ -11,3 +11,11 @@ export const getCurses = (id: string) => {
 export const deleteCourse = (id: string) => {
   return API.delete(`/api/instructor/${id}`);
 };
+
+export const getCourseById = (id: string) => {
+  return API.get(`/api/instructor/${id}`);
+};
+
+export const updateCourse = (id: string, data: object) => {
+  return API.put(`/api/instructor/${id}`, data);
+};
