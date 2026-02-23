@@ -307,8 +307,6 @@ export default function EditCourse() {
 
       const response = await updateCourse(courseId, formData);
 
-      console.log(response);
-
       if (response?.data?.success) {
         toast.success("Course updated successfully");
 
@@ -367,9 +365,7 @@ export default function EditCourse() {
 
             updatedCourses = [...(user.createdCourses || []), newCourseEntry];
           }
-
-          console.log("Updated courses to dispatch:", updatedCourses);
-            dispatch(updateUser({ createdCourses: updatedCourses }));
+          dispatch(updateUser({ createdCourses: updatedCourses }));
         }
 
         router.push("/instructor/courses");
