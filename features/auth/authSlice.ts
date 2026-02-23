@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
 export interface User {
   _id: string;
   email: string;
@@ -8,14 +7,13 @@ export interface User {
   phone?: string;
   role?: string;
   createdAt?: string;
-  enrolledCourses?: string[];
-  createdCourses?: string[];
+  enrolledCourses?: Array<string | { _id: string }>; // Accept both
+  createdCourses?: Array<string | { _id: string }>;  // Accept both
 }
 
 interface AuthState {
   user: User | null;
 }
-
 
 const getUserFromStorage = (): User | null => {
   if (typeof window !== "undefined") {
@@ -30,11 +28,9 @@ const getUserFromStorage = (): User | null => {
   return null;
 };
 
-
 const initialState: AuthState = {
   user: getUserFromStorage(),
 };
-
 
 const authSlice = createSlice({
   name: "auth",
@@ -42,7 +38,6 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
-
       if (typeof window !== "undefined") {
         localStorage.setItem("user", JSON.stringify(action.payload));
       }
@@ -50,7 +45,6 @@ const authSlice = createSlice({
 
     logout: (state) => {
       state.user = null;
-
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
@@ -58,7 +52,17 @@ const authSlice = createSlice({
 
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
-        state.user = { ...state.user, ...action.payload };
+        // Normalize the data before saving
+        const updatedUser = { ...state.user, ...action.payload };
+        
+        // Ensure createdCourses is stored consistently
+        if (updatedUser.createdCourses) {
+          updatedUser.createdCourses = updatedUser.createdCourses.map(course => 
+            typeof course === 'object' && course !== null ? course._id : course
+          );
+        }
+        
+        state.user = updatedUser;
 
         if (typeof window !== "undefined") {
           localStorage.setItem("user", JSON.stringify(state.user));

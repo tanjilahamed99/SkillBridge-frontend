@@ -7,3 +7,7 @@ export const createCurse = (id: string, data: object) => {
 export const getCurses = (id: string) => {
   return API.get(`/api/instructor/all/${id}`);
 };
+
+export const deleteCourse = (id: string) => {
+  return API.delete(`/api/instructor/${id}`);
+};

@@ -11,7 +11,6 @@ import {
   Plus,
   Trash2,
   GripVertical,
-  FileText,
   Video,
   DollarSign,
   ChevronDown,
@@ -19,10 +18,9 @@ import {
   CheckCircle,
   Clock,
   Tag,
-  Globe,
   BookOpen,
-  Target,
   Layers,
+  ChevronUp,
 } from "lucide-react";
 import { createCurse } from "@/actions/instructor";
 import { useAppDispatch, useAppSelector } from "@/hooks/useDispatch";
@@ -57,28 +55,11 @@ export default function CreateCourse() {
 
   const [lessons, setLessons] = useState([
     {
-      id: 1,
-      title: "Introduction to the Course",
-      duration: "10:30",
-      isPreview: true,
+      title: "",
+      description: "",
+      duration: "00:00",
       type: "video",
       order: 1,
-    },
-    {
-      id: 2,
-      title: "Setting Up Development Environment",
-      duration: "15:45",
-      isPreview: false,
-      type: "video",
-      order: 2,
-    },
-    {
-      id: 3,
-      title: "Course Resources and Materials",
-      duration: "5:20",
-      isPreview: true,
-      type: "article",
-      order: 3,
     },
   ]);
 
@@ -208,8 +189,8 @@ export default function CreateCourse() {
       formData.append("title", courseData.title);
       formData.append("description", courseData.description);
       formData.append("category", courseData.category);
+      formData.append("lesson", JSON.stringify(lessons));
       formData.append("level", courseData.level);
-      formData.append("language", courseData.language);
       formData.append("price", courseData.price.toString());
       formData.append("isFree", courseData.isFree.toString());
       formData.append("status", publishStatus || courseData.status);
@@ -222,6 +203,9 @@ export default function CreateCourse() {
       if (thumbnailFile) {
         formData.append("thumbnail", thumbnailFile);
       }
+
+      console.log(formData);
+
       const { data } = await createCurse(user._id, formData);
       if (data.success) {
         router.push(`/instructor/courses`);
@@ -252,8 +236,22 @@ export default function CreateCourse() {
       name: "Pricing",
       icon: <DollarSign className="w-4 h-4" />,
     },
-    { id: "settings", name: "Settings", icon: <Target className="w-4 h-4" /> },
   ];
+
+  const addLesson = () => {
+    const newLesson = {
+      title: "",
+      description: "",
+      duration: "00:00",
+      type: "video",
+      order: lessons.length + 1,
+    };
+    setLessons([...lessons, newLesson]);
+  };
+
+  const removeLesson = (title: unknown) => {
+    setLessons(lessons.filter((lesson) => lesson.title !== title));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -451,27 +449,6 @@ export default function CreateCourse() {
                   </select>
                 </div>
               </div>
-
-              {/* Language */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <Globe className="w-4 h-4 inline mr-1" />
-                  Course Language
-                </label>
-                <select
-                  value={courseData.language}
-                  onChange={(e) =>
-                    setCourseData({ ...courseData, language: e.target.value })
-                  }
-                  className="w-full md:w-96 px-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none">
-                  <option value="english">English</option>
-                  <option value="spanish">Spanish</option>
-                  <option value="french">French</option>
-                  <option value="german">German</option>
-                  <option value="chinese">Chinese</option>
-                </select>
-              </div>
-
               {/* Thumbnail Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -622,101 +599,168 @@ export default function CreateCourse() {
 
           {activeTab === "content" && (
             <div className="space-y-6">
-              {/* Lessons Header */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">
-                    Course Lessons
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Organize your course content into lessons
-                  </p>
-                </div>
-                <button className="bg-purple-600 text-white px-4 py-2.5 rounded-xl hover:bg-purple-700 transition flex items-center gap-2 font-medium">
-                  <Plus className="w-4 h-4" />
-                  Add Lesson
-                </button>
-              </div>
-
-              {/* Lessons List */}
-              <div className="space-y-3">
-                {lessons.map((lesson, index) => (
-                  <div
-                    key={lesson.id}
-                    className="flex items-center gap-3 p-4 bg-purple-50 rounded-xl border border-purple-100 group">
-                    <GripVertical className="w-5 h-5 text-gray-400 cursor-move" />
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        {lesson.type === "video" ? (
-                          <Video className="w-4 h-4 text-purple-600" />
-                        ) : (
-                          <FileText className="w-4 h-4 text-purple-600" />
-                        )}
-                        <input
-                          type="text"
-                          value={lesson.title}
-                          onChange={(e) => {
-                            const newLessons = [...lessons];
-                            newLessons[index].title = e.target.value;
-                            setLessons(newLessons);
-                          }}
-                          className="bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-600 focus:outline-none px-2 py-1 flex-1 font-medium"
-                          placeholder="Lesson title"
-                        />
-                      </div>
+              <div>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        Course Lessons
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Add lessons with titles and descriptions
+                      </p>
                     </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        <input
-                          type="text"
-                          value={lesson.duration}
-                          onChange={(e) => {
-                            const newLessons = [...lessons];
-                            newLessons[index].duration = e.target.value;
-                            setLessons(newLessons);
-                          }}
-                          className="w-16 bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-600 focus:outline-none px-1"
-                          placeholder="10:30"
-                        />
-                      </div>
-
-                      <label className="flex items-center gap-1 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={lesson.isPreview}
-                          onChange={(e) => {
-                            const newLessons = [...lessons];
-                            newLessons[index].isPreview = e.target.checked;
-                            setLessons(newLessons);
-                          }}
-                          className="rounded text-purple-600"
-                        />
-                        Preview
-                      </label>
-
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => moveLesson(index, "up")}
-                          disabled={index === 0}
-                          className="p-1 hover:bg-purple-200 rounded disabled:opacity-30 transition">
-                          <ChevronDown className="w-4 h-4 rotate-180" />
-                        </button>
-                        <button
-                          onClick={() => moveLesson(index, "down")}
-                          disabled={index === lessons.length - 1}
-                          className="p-1 hover:bg-purple-200 rounded disabled:opacity-30 transition">
-                          <ChevronDown className="w-4 h-4" />
-                        </button>
-                        <button className="p-1 hover:bg-red-200 rounded transition">
-                          <Trash2 className="w-4 h-4 text-red-500" />
-                        </button>
-                      </div>
-                    </div>
+                    <button
+                      onClick={addLesson}
+                      className="bg-purple-600 text-white px-4 py-2.5 rounded-xl hover:bg-purple-700 transition flex items-center gap-2 font-medium shadow-sm hover:shadow">
+                      <Plus className="w-4 h-4" />
+                      Add Lesson
+                    </button>
                   </div>
-                ))}
+
+                  {/* Lessons List */}
+                  <div className="space-y-4">
+                    {lessons.map((lesson, index) => (
+                      <div
+                        key={index}
+                        className="bg-white border-2 border-purple-100 rounded-xl p-5 hover:border-purple-300 transition group">
+                        {/* Lesson Header with Drag Handle and Number */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <GripVertical className="w-5 h-5 text-gray-400 cursor-move" />
+                          <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
+                            Lesson {index + 1}
+                          </span>
+                          <span className="text-xs text-gray-400">•</span>
+                          <span className="text-xs text-gray-500">
+                            {lesson.type === "video"
+                              ? "Video Lesson"
+                              : "Article"}
+                          </span>
+                        </div>
+
+                        {/* Title Field */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1.5">
+                              Lesson Title{" "}
+                              <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={lesson.title}
+                              onChange={(e) => {
+                                const newLessons = [...lessons];
+                                newLessons[index].title = e.target.value;
+                                setLessons(newLessons);
+                              }}
+                              className="w-full px-4 py-2.5 border-2 border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-200 transition"
+                              placeholder="e.g., Introduction to the Course"
+                            />
+                          </div>
+
+                          {/* Description Field */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1.5">
+                              Lesson Description
+                            </label>
+                            <textarea
+                              value={lesson.description || ""}
+                              onChange={(e) => {
+                                const newLessons = [...lessons];
+                                newLessons[index].description = e.target.value;
+                                setLessons(newLessons);
+                              }}
+                              rows={2}
+                              className="w-full px-4 py-2.5 border-2 border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-200 transition resize-none"
+                              placeholder="Brief description of what this lesson covers..."
+                            />
+                          </div>
+
+                          {/* Lesson Options */}
+                          <div className="flex flex-wrap items-center gap-4 pt-2">
+                            {/* Duration */}
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-4 h-4 text-gray-400" />
+                              <input
+                                type="text"
+                                value={lesson.duration}
+                                onChange={(e) => {
+                                  const newLessons = [...lessons];
+                                  newLessons[index].duration = e.target.value;
+                                  setLessons(newLessons);
+                                }}
+                                className="w-20 px-2 py-1 border border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none text-sm"
+                                placeholder="10:30"
+                              />
+                              <span className="text-xs text-gray-400">min</span>
+                            </div>
+
+                            {/* Preview Toggle */}
+                            {/* Lesson Type */}
+                            <select
+                              value={lesson.type}
+                              onChange={(e) => {
+                                const newLessons = [...lessons];
+                                newLessons[index].type = e.target.value;
+                                setLessons(newLessons);
+                              }}
+                              className="px-3 py-1.5 border border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none text-sm">
+                              <option value="video">Video</option>
+                              <option value="article">Article</option>
+                              <option value="quiz">Quiz</option>
+                              <option value="assignment">Assignment</option>
+                            </select>
+
+                            {/* Move Up/Down Buttons */}
+                            <div className="flex items-center gap-1 ml-auto">
+                              <button
+                                onClick={() => moveLesson(index, "up")}
+                                disabled={index === 0}
+                                className="p-1.5 text-gray-500 hover:bg-purple-100 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent transition"
+                                title="Move up">
+                                <ChevronUp className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => moveLesson(index, "down")}
+                                disabled={index === lessons.length - 1}
+                                className="p-1.5 text-gray-500 hover:bg-purple-100 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent transition"
+                                title="Move down">
+                                <ChevronDown className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => removeLesson(lesson.title)}
+                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                title="Delete lesson">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Empty State */}
+                  {lessons.length === 0 && (
+                    <div className="text-center py-12 bg-purple-50 rounded-xl border-2 border-dashed border-purple-200">
+                      <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Video className="w-8 h-8 text-purple-500" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                        No lessons yet
+                      </h4>
+                      <p className="text-gray-500 mb-4">
+                        Start adding lessons to build your course content
+                      </p>
+                      <button
+                        onClick={addLesson}
+                        className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-2.5 rounded-xl hover:bg-purple-700 transition font-medium">
+                        <Plus className="w-4 h-4" />
+                        Add Your First Lesson
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -839,151 +883,6 @@ export default function CreateCourse() {
                     </span>
                   </li>
                 </ul>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "settings" && (
-            <div className="max-w-2xl space-y-8">
-              {/* Language */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <Globe className="w-4 h-4 inline mr-1" />
-                  Course Language
-                </label>
-                <select
-                  value={courseData.language}
-                  onChange={(e) =>
-                    setCourseData({ ...courseData, language: e.target.value })
-                  }
-                  className="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none">
-                  <option value="english">English</option>
-                  <option value="spanish">Spanish</option>
-                  <option value="french">French</option>
-                  <option value="german">German</option>
-                  <option value="chinese">Chinese</option>
-                </select>
-              </div>
-
-              {/* Prerequisites */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Prerequisites (Optional)
-                </label>
-                {courseData.prerequisites.map((prereq, index) => (
-                  <div key={index} className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={prereq}
-                      onChange={(e) => {
-                        const newPrereqs = [...courseData.prerequisites];
-                        newPrereqs[index] = e.target.value;
-                        setCourseData({
-                          ...courseData,
-                          prerequisites: newPrereqs,
-                        });
-                      }}
-                      className="flex-1 px-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none"
-                      placeholder={`e.g., Basic JavaScript knowledge`}
-                    />
-                    <button
-                      onClick={() => {
-                        const newPrereqs = courseData.prerequisites.filter(
-                          (_, i) => i !== index,
-                        );
-                        setCourseData({
-                          ...courseData,
-                          prerequisites: newPrereqs,
-                        });
-                      }}
-                      className="p-3 text-red-500 hover:bg-red-50 rounded-xl transition">
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  onClick={() =>
-                    setCourseData({
-                      ...courseData,
-                      prerequisites: [...courseData.prerequisites, ""],
-                    })
-                  }
-                  className="mt-2 text-purple-600 hover:text-purple-700 font-medium flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  Add Prerequisite
-                </button>
-              </div>
-
-              {/* Publishing Options */}
-              <div className="border-t border-purple-100 pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Publishing Options
-                </h3>
-
-                <div className="space-y-4">
-                  <label className="flex items-start gap-3 p-4 border-2 border-purple-100 rounded-xl hover:border-purple-300 cursor-pointer transition">
-                    <input
-                      type="radio"
-                      name="publish"
-                      value="draft"
-                      checked={courseData.status === "draft"}
-                      onChange={() =>
-                        setCourseData({ ...courseData, status: "draft" })
-                      }
-                      className="mt-1"
-                    />
-                    <div>
-                      <span className="font-semibold text-gray-900">
-                        Save as Draft
-                      </span>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Work on your course privately. Only you can see it.
-                      </p>
-                    </div>
-                  </label>
-
-                  <label className="flex items-start gap-3 p-4 border-2 border-purple-100 rounded-xl hover:border-purple-300 cursor-pointer transition">
-                    <input
-                      type="radio"
-                      name="publish"
-                      value="pending"
-                      checked={courseData.status === "pending"}
-                      onChange={() =>
-                        setCourseData({ ...courseData, status: "pending" })
-                      }
-                      className="mt-1"
-                    />
-                    <div>
-                      <span className="font-semibold text-gray-900">
-                        Submit for Review
-                      </span>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Submit for admin approval. Review takes 24-48 hours.
-                      </p>
-                    </div>
-                  </label>
-
-                  <label className="flex items-start gap-3 p-4 border-2 border-purple-100 rounded-xl hover:border-purple-300 cursor-pointer transition">
-                    <input
-                      type="radio"
-                      name="publish"
-                      value="published"
-                      checked={courseData.status === "published"}
-                      onChange={() =>
-                        setCourseData({ ...courseData, status: "published" })
-                      }
-                      className="mt-1"
-                    />
-                    <div>
-                      <span className="font-semibold text-gray-900">
-                        Publish Immediately
-                      </span>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Make your course live right away for students to enroll.
-                      </p>
-                    </div>
-                  </label>
-                </div>
               </div>
             </div>
           )}
