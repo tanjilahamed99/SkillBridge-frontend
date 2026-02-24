@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Home, BookOpen, LogOut, Upload } from "lucide-react";
@@ -39,6 +39,25 @@ export default function InstructorLayout({
     localStorage.removeItem("user");
     dispatch(logout());
   };
+
+  useEffect(() => {
+    // Redirect if not authenticated
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
+
+  // Show loading state while checking authentication
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-purple-50">

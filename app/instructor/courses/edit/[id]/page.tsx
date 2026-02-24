@@ -27,11 +27,12 @@ import { getCourseById, updateCourse } from "@/actions/instructor";
 import { useAppDispatch, useAppSelector } from "@/hooks/useDispatch";
 import { toast } from "sonner";
 import Image from "next/image";
-import { updateUser } from "@/features/auth/authSlice";
+import { CourseReference, updateUser } from "@/features/auth/authSlice";
 
+// Define interfaces
 interface User {
   _id: string;
-  createdCourses?: Array<{ _id: string }>;
+  createdCourses?: Array<CourseReference>;
 }
 
 interface Lesson {
@@ -58,12 +59,22 @@ interface CourseData {
   objectives: string[];
   thumbnail: string | null;
   lessons?: Lesson[];
+  lesson?: string; // For parsed JSON string
+  totalEnrollments?: number;
+}
+
+interface ApiResponse {
+  data: {
+    success: boolean;
+    data: CourseData;
+  };
 }
 
 export default function EditCourse() {
   const router = useRouter();
   const params = useParams();
-  const courseId = params.id as string;
+  // Safely get courseId with type assertion
+  const courseId = params?.id as string | undefined;
 
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("basic");
@@ -74,6 +85,8 @@ export default function EditCourse() {
   const user = useAppSelector((state) => state.auth.user) as User | null;
   const [error, setError] = useState("");
   const dispatch = useAppDispatch();
+
+  console.log(error);
 
   const [courseData, setCourseData] = useState<CourseData>({
     title: "",
@@ -117,11 +130,16 @@ export default function EditCourse() {
   // Fetch course data on component mount
   useEffect(() => {
     const fetchCourse = async () => {
-      if (!courseId) return;
+      if (!courseId) {
+        setLoading(false);
+        toast.error("No course ID provided");
+        router.push("/instructor/courses");
+        return;
+      }
 
       setLoading(true);
       try {
-        const response = await getCourseById(courseId);
+        const response = (await getCourseById(courseId)) as ApiResponse;
 
         if (response?.data?.success && response.data.data) {
           const course = response.data.data;
@@ -136,7 +154,7 @@ export default function EditCourse() {
             price: course.price || 49.99,
             isFree: course.isFree || false,
             status: course.status || "draft",
-            tags: course.tags || [],
+            tags: Array.isArray(course.tags) ? course.tags : [],
             prerequisites: course.prerequisites?.length
               ? course.prerequisites
               : ["", "", ""],
@@ -147,9 +165,15 @@ export default function EditCourse() {
           });
 
           // Set lessons if they exist
-
-          if (JSON.parse(course.lesson)?.length) {
-            setLessons(JSON.parse(course.lesson));
+          if (course.lesson) {
+            try {
+              const parsedLessons = JSON.parse(course.lesson);
+              if (Array.isArray(parsedLessons) && parsedLessons.length > 0) {
+                setLessons(parsedLessons);
+              }
+            } catch (e) {
+              console.error("Error parsing lessons:", e);
+            }
           }
 
           // Set thumbnail preview if exists
@@ -275,6 +299,11 @@ export default function EditCourse() {
   const handleSave = async (
     publishStatus?: "draft" | "pending" | "published",
   ) => {
+    if (!courseId) {
+      toast.error("Course ID is missing");
+      return;
+    }
+
     if (!validateBasicInfo()) {
       setActiveTab("basic");
       return;
@@ -306,7 +335,7 @@ export default function EditCourse() {
         formData.append("thumbnail", thumbnailFile);
       }
 
-      const response = await updateCourse(courseId, formData);
+      const response = (await updateCourse(courseId, formData)) as ApiResponse;
 
       if (response?.data?.success) {
         toast.success("Course updated successfully");
@@ -315,57 +344,51 @@ export default function EditCourse() {
         const updatedCourseData = response.data.data;
 
         if (user) {
+          // Create the course object with all the fields you want to store
+          const courseToStore: CourseReference = {
+            _id: updatedCourseData._id || "",
+            courseId: updatedCourseData._id || "",
+            status: updatedCourseData.status || "draft",
+            thumbnail: updatedCourseData.thumbnail || null,
+            totalStudents: updatedCourseData.totalEnrollments || 0,
+            totalRevenue: 0, // You can update this later from payment data
+            title: updatedCourseData.title || "",
+          };
+
           // Check if the course already exists in user's createdCourses
-          // Compare with either courseId or _id
-          const courseExists = user.createdCourses?.some(
-            (course) =>
-              course.courseId === updatedCourseData._id ||
-              course._id === updatedCourseData._id,
-          );
+          const existingIndex = user.createdCourses?.findIndex((course) => {
+            if (typeof course === "string") {
+              return course === updatedCourseData._id;
+            }
+            return course?._id === updatedCourseData._id;
+          });
 
           let updatedCourses;
 
-          if (courseExists) {
-            // Update existing course - PRESERVE the structure of user.createdCourses
-            updatedCourses = user.createdCourses.map((course) => {
-              // Check if this is the course we're updating
-              if (
-                course.courseId === updatedCourseData._id ||
-                course._id === updatedCourseData._id
-              ) {
-                // Return object with the SAME STRUCTURE as user.createdCourses
-                return {
-                  courseId: updatedCourseData._id, // Keep the courseId field
-                  _id: course._id || updatedCourseData._id, // Keep existing _id or use new one
-                  status: updatedCourseData.status || course.status,
-                  thumbnail: updatedCourseData.thumbnail || course.thumbnail,
-                  totalStudents:
-                    updatedCourseData.totalEnrollments ||
-                    course.totalStudents ||
-                    0,
-                  totalRevenue: course.totalRevenue || 0, // Keep existing revenue
-                  // Preserve any other fields that were in the original
-                  ...course, // Keep existing fields
-                  // Override with new data but only specific fields
-                  title: updatedCourseData.title, // Add title if needed
-                };
-              }
-              return course;
-            });
-          } else {
-            // Add new course to the array - match the structure of user.createdCourses
-            const newCourseEntry = {
-              courseId: updatedCourseData._id,
-              _id: updatedCourseData._id,
-              status: updatedCourseData.status || "draft",
-              thumbnail: updatedCourseData.thumbnail || null,
-              totalStudents: updatedCourseData.totalEnrollments || 0,
-              totalRevenue: 0,
-              title: updatedCourseData.title, // Add title if your structure supports it
-            };
+          if (
+            existingIndex !== undefined &&
+            existingIndex !== -1 &&
+            user.createdCourses
+          ) {
+            // Update existing course - preserve the structure
+            updatedCourses = [...user.createdCourses];
+            const existingCourse = updatedCourses[existingIndex];
 
-            updatedCourses = [...(user.createdCourses || []), newCourseEntry];
+            if (typeof existingCourse === "string") {
+              // If it was a string, replace with the full object
+              updatedCourses[existingIndex] = courseToStore;
+            } else {
+              // If it was an object, merge with new data
+              updatedCourses[existingIndex] = {
+                ...existingCourse,
+                ...courseToStore,
+              };
+            }
+          } else {
+            // Add new course to the array
+            updatedCourses = [...(user.createdCourses || []), courseToStore];
           }
+
           dispatch(updateUser({ createdCourses: updatedCourses }));
         }
 
@@ -379,7 +402,6 @@ export default function EditCourse() {
       setIsSaving(false);
     }
   };
-
   const addLesson = () => {
     const newLesson = {
       title: "",
@@ -420,6 +442,21 @@ export default function EditCourse() {
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading course data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!courseId) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Invalid course ID</p>
+          <button
+            onClick={() => router.push("/instructor/courses")}
+            className="bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700">
+            Go Back
+          </button>
         </div>
       </div>
     );

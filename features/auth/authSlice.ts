@@ -1,5 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export interface CourseReference {
+  _id: string;
+  courseId?: string;
+  status?: string;
+  thumbnail?: string | null;
+  totalStudents?: number;
+  totalRevenue?: number;
+  title?: string;
+}
+
 export interface User {
   _id: string;
   email: string;
@@ -7,8 +17,11 @@ export interface User {
   phone?: string;
   role?: string;
   createdAt?: string;
-  enrolledCourses?: Array<string | { _id: string }>; // Accept both
-  createdCourses?: Array<string | { _id: string }>; // Accept both
+  picture?: string | null;
+  qualification?: string;
+  bio?: string;
+  enrolledCourses?: Array<string | { _id: string }>;
+  createdCourses?: Array<string | CourseReference>;
 }
 
 interface AuthState {
@@ -42,19 +55,19 @@ const authSlice = createSlice({
         localStorage.setItem("user", JSON.stringify(action.payload));
       }
     },
+
     logout: (state) => {
       state.user = null;
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
     },
+
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         // Merge the new data with existing user data
-        // This preserves all nested objects including course details
         state.user = { ...state.user, ...action.payload };
 
-        // Sync with localStorage
         if (typeof window !== "undefined") {
           localStorage.setItem("user", JSON.stringify(state.user));
         }

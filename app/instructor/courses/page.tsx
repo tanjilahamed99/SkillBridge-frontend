@@ -355,7 +355,18 @@ export default function InstructorCourses() {
                         <BookOpen className="w-4 h-4 text-gray-400 mx-auto mb-1" />
                         <p className="text-xs text-gray-500">Lessons</p>
                         <p className="font-semibold text-gray-900">
-                          {JSON.parse(course.lesson)?.length || 0}
+                          {course.lesson
+                            ? (() => {
+                                try {
+                                  const parsed = JSON.parse(course.lesson);
+                                  return Array.isArray(parsed)
+                                    ? parsed.length
+                                    : 0;
+                                } catch {
+                                  return 0;
+                                }
+                              })()
+                            : 0}
                         </p>
                       </div>
                     </div>
@@ -426,9 +437,9 @@ export default function InstructorCourses() {
                           {course.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-3 line-clamp-2">
-                         {course.description.length > 100
-                        ? course.description.substring(0, 100) + "..."
-                        : course.description}
+                          {course.description.length > 100
+                            ? course.description.substring(0, 100) + "..."
+                            : course.description}
                         </p>
 
                         {/* Stats */}
@@ -439,7 +450,18 @@ export default function InstructorCourses() {
                           </span>
                           <span className="flex items-center gap-1">
                             <BookOpen className="w-4 h-4" />
-                            {JSON.parse(course.lesson)?.length || 0}
+                            {course.lesson
+                              ? (() => {
+                                  try {
+                                    const parsed = JSON.parse(course.lesson);
+                                    return Array.isArray(parsed)
+                                      ? parsed.length
+                                      : 0;
+                                  } catch {
+                                    return 0;
+                                  }
+                                })()
+                              : 0}
                           </span>
                           <span className="flex items-center gap-1">
                             <DollarSign className="w-4 h-4" />{" "}
