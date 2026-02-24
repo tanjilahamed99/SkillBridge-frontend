@@ -1,32 +1,39 @@
 import { useAppSelector } from "@/hooks/useDispatch";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const AdminPrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const user = useAppSelector((state) => state.auth.user);
   const router = useRouter();
 
-  // Not logged in
-  if (!user) {
-    return router.push("/login");
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    switch (user.role) {
+      case "instructor":
+        router.push("/instructor");
+        break;
+      case "superAdmin":
+        router.push("/super-admin");
+        break;
+      case "admin":
+        break;
+      case "student":
+        router.push("/dashboard");
+        break;
+      default:
+        router.push("/login");
+    }
+  }, [user, router]);
+
+  if (!user || user.role !== "student") {
+    return null;
   }
 
-  // Role-based redirect
-  switch (user.role) {
-    case "instructor":
-      return router.push("/instructor");
-
-    case "student":
-      return router.push("/dashboard");
-
-    case "superAdmin":
-      return router.push("/superAdmin");
-
-    case "admin":
-      return children;
-
-    default:
-      return router.push("/login");
-  }
+  return <>{children}</>;
 };
 
 export default AdminPrivateRoute;

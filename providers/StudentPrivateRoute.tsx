@@ -23,19 +23,18 @@ const StudentPrivateRoute = ({
         router.push("/instructor");
         break;
       case "superAdmin":
-        router.push("/superAdmin");
+        router.push("/super-admin");
         break;
       case "admin":
         router.push("/admin");
         break;
       case "student":
-        break; // allow access
+        break;
       default:
         router.push("/login");
     }
   }, [user, router]);
 
-  // While redirecting or if unauthorized
   if (!user || user.role !== "student") {
     return null;
   }

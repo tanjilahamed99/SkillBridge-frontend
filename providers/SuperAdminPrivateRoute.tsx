@@ -1,5 +1,8 @@
+"use client";
+
 import { useAppSelector } from "@/hooks/useDispatch";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const SuperAdminPrivateRoute = ({
   children,
@@ -9,28 +12,34 @@ const SuperAdminPrivateRoute = ({
   const user = useAppSelector((state) => state.auth.user);
   const router = useRouter();
 
-  // Not logged in
-  if (!user) {
-    return router.push("/login");
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    switch (user.role) {
+      case "instructor":
+        router.push("/instructor");
+        break;
+      case "superAdmin":
+        break;
+      case "admin":
+        router.push("/admin");
+        break;
+      case "student":
+        router.push("/dashboard");
+        break;
+      default:
+        router.push("/login");
+    }
+  }, [user, router]);
+
+  if (!user || user.role !== "superAdmin") {
+    return null;
   }
 
-  // Role-based redirect
-  switch (user.role) {
-    case "instructor":
-      return router.push("/instructor");
-
-    case "student":
-      return router.push("/dashboard");
-
-    case "superAdmin":
-      return children;
-
-    case "admin":
-      return router.push("/admin");
-
-    default:
-      return router.push("/login");
-  }
+  return <>{children}</>;
 };
 
 export default SuperAdminPrivateRoute;
