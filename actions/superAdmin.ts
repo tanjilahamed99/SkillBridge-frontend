@@ -19,3 +19,11 @@ export const updateAdmin = (data: object) => {
 export const deleteAdmin = (id: string) => {
   return API.delete(`/api/superAdmin/admin/${id}`);
 };
+
+export const getAllCourses = () => {
+  return API.get(`/api/superAdmin/courses`);
+};
+
+export const updateCourseStatus = (id: string, data: object) => {
+  return API.put(`/api/superAdmin/courses/${id}`, data);
+};

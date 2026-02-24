@@ -33,7 +33,7 @@ const InstructorPrivateRoute = ({
     }
   }, [user, router]);
 
-  if (!user || user.role !== "student") {
+  if (!user || user.role !== "instructor") {
     return null;
   }
 

@@ -12,7 +12,6 @@ import {
   XCircle,
   AlertCircle,
   UserPlus,
-  RefreshCw,
   Lock,
   Unlock,
 } from "lucide-react";
@@ -37,9 +36,7 @@ interface Admin {
 
 export default function AdminsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "superAdmin">(
-    "all",
-  );
+
   const [statusFilter, setStatusFilter] = useState<
     "all" | "active" | "inactive" | "suspended"
   >("all");
@@ -63,10 +60,10 @@ export default function AdminsPage() {
     const matchesSearch =
       admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       admin.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = roleFilter === "all" || admin.role === roleFilter;
+
     const matchesStatus =
       statusFilter === "all" || admin.status === statusFilter;
-    return matchesSearch && matchesRole && matchesStatus;
+    return matchesSearch && matchesStatus;
   });
 
   const getRoleBadge = (role: string) => {
