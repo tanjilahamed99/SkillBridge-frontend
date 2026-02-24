@@ -27,3 +27,7 @@ export const getAllCourses = () => {
 export const updateCourseStatus = (id: string, data: object) => {
   return API.put(`/api/superAdmin/courses/${id}`, data);
 };
+
+export const superAdminAnalysis = () => {
+  return API.get(`/api/superAdmin/analysis`);
+};

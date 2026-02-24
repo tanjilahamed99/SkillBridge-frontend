@@ -192,8 +192,8 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-purple-50 transition">
+              {filteredUsers.map((user, idx) => (
+                <tr key={idx} className="hover:bg-purple-50 transition">
                   <td className="px-4 sm:px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center text-white font-semibold text-sm sm:text-base">
