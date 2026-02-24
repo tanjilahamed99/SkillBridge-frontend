@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   BookOpen,
   Users,
-  DollarSign,
   Clock,
   MoreHorizontal,
   CheckCircle,
@@ -110,9 +109,9 @@ export default function InstructorDashboard() {
       </div>
 
       {/* Main Grid */}
-      <div className="grid gap-8">
+      <div className="md:grid gap-8">
         {/* Left Column - Courses */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="md:col-span-2 space-y-6">
           {/* Recent Courses */}
           <div className="bg-white rounded-2xl border border-purple-100 overflow-hidden">
             <div className="p-6 border-b border-purple-100">
@@ -137,14 +136,19 @@ export default function InstructorDashboard() {
                       width={500}
                       height={500}
                       alt="Course thumbnail"
-                      className="md:w-32 h-20 bg-gray-200 rounded-xl shrink-0"
+                      className="w-32 h-20 bg-gray-200 rounded-xl shrink-0"
                       unoptimized={true}
                     />
                     <div className="flex-1">
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
                         <div>
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold hidden md:flex text-gray-900">
                             {course.title}
+                          </h3>
+                          <h3 className="font-semibold md:hidden text-gray-900">
+                            {course.title.length > 30
+                              ? course.title.substring(0, 30) + "..."
+                              : course.title}
                           </h3>
                           <div className="flex items-center gap-3 mt-1">
                             {getStatusBadge(course.status)}

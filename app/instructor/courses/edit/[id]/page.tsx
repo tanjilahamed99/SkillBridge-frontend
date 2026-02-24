@@ -147,8 +147,9 @@ export default function EditCourse() {
           });
 
           // Set lessons if they exist
-          if (course.lessons?.length) {
-            setLessons(course.lessons);
+
+          if (JSON.parse(course.lesson)?.length) {
+            setLessons(JSON.parse(course.lesson));
           }
 
           // Set thumbnail preview if exists
@@ -429,43 +430,49 @@ export default function EditCourse() {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white border-b border-purple-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 sm:py-0 sm:h-20 gap-4 sm:gap-0">
+            {/* Left side */}
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 href="/instructor/courses"
-                className="p-2 hover:bg-purple-50 rounded-xl transition">
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                className="p-1.5 sm:p-2 hover:bg-purple-50 rounded-lg sm:rounded-xl transition shrink-0">
+                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
               </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0">
+                {" "}
+                {/* Allows text truncation */}
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 truncate">
                   Edit Course
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500 truncate hidden xs:block">
                   Update your course information
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Right side */}
+            <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 onClick={() => handleSave("draft")}
                 disabled={isSaving}
-                className="px-6 py-2.5 border border-purple-200 text-purple-600 rounded-xl font-medium hover:bg-purple-50 transition disabled:opacity-50">
+                className="w-full xs:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 border border-purple-200 text-purple-600 rounded-lg sm:rounded-xl font-medium hover:bg-purple-50 transition disabled:opacity-50 text-xs sm:text-sm">
                 Save Draft
               </button>
               <button
                 onClick={() => handleSave("pending")}
                 disabled={isSaving}
-                className="bg-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-purple-700 transition shadow-lg shadow-purple-200 disabled:opacity-50 flex items-center gap-2">
+                className="w-full xs:w-auto bg-purple-600 text-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium hover:bg-purple-700 transition shadow-md sm:shadow-lg shadow-purple-200 disabled:opacity-50 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                 {isSaving ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Saving...
+                    <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+                    <span className="hidden xs:inline">Saving...</span>
+                    <span className="xs:hidden">...</span>
                   </>
                 ) : (
                   <>
-                    <Save className="w-4 h-4" />
-                    Update Course
+                    <Save className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Update Course</span>
+                    <span className="xs:hidden">Update</span>
                   </>
                 )}
               </button>
@@ -475,33 +482,33 @@ export default function EditCourse() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Tabs */}
-        <div className="bg-white rounded-xl border border-purple-100 p-2 mb-6">
-          <div className="flex flex-wrap gap-2">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        {/* Tabs - Horizontal scroll on mobile */}
+        <div className="bg-white rounded-lg sm:rounded-xl border border-purple-100 p-1.5 sm:p-2 mb-4 sm:mb-6 overflow-x-auto">
+          <div className="flex flex-nowrap sm:flex-wrap gap-1.5 sm:gap-2 min-w-max sm:min-w-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition ${
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap transition ${
                   activeTab === tab.id
                     ? "bg-purple-600 text-white shadow-md"
                     : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
                 }`}>
-                {tab.icon}
-                {tab.name}
+                <span className="w-4 h-4 sm:w-5 sm:h-5">{tab.icon}</span>
+                <span className="hidden xs:inline">{tab.name}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Tab Content - Same as create page but with populated data */}
-        <div className="bg-white rounded-2xl border border-purple-100 p-6 md:p-8">
+        {/* Tab Content */}
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-purple-100 p-4 sm:p-6 md:p-8">
           {activeTab === "basic" && (
-            <div className="space-y-8">
+            <div className="space-y-4 sm:space-y-6 md:space-y-8">
               {/* Title */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                   Course Title <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -511,7 +518,7 @@ export default function EditCourse() {
                     setCourseData({ ...courseData, title: e.target.value });
                     if (errors.title) setErrors({ ...errors, title: "" });
                   }}
-                  className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition ${
+                  className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 rounded-lg sm:rounded-xl focus:outline-none transition ${
                     errors.title
                       ? "border-red-500 focus:border-red-500"
                       : "border-purple-100 focus:border-purple-600"
@@ -519,8 +526,8 @@ export default function EditCourse() {
                   placeholder="e.g., Complete Web Development Bootcamp"
                 />
                 {errors.title ? (
-                  <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-xs sm:text-sm text-red-500 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                     {errors.title}
                   </p>
                 ) : (
@@ -530,15 +537,14 @@ export default function EditCourse() {
                   </p>
                 )}
               </div>
-              <p className="text-sm text-red-600">{error}</p>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                   Course Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  rows={6}
+                  rows={5}
                   value={courseData.description}
                   onChange={(e) => {
                     setCourseData({
@@ -548,7 +554,7 @@ export default function EditCourse() {
                     if (errors.description)
                       setErrors({ ...errors, description: "" });
                   }}
-                  className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition ${
+                  className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 rounded-lg sm:rounded-xl focus:outline-none transition ${
                     errors.description
                       ? "border-red-500 focus:border-red-500"
                       : "border-purple-100 focus:border-purple-600"
@@ -556,8 +562,8 @@ export default function EditCourse() {
                   placeholder="Describe what students will learn, course requirements, target audience..."
                 />
                 {errors.description ? (
-                  <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-xs sm:text-sm text-red-500 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                     {errors.description}
                   </p>
                 ) : (
@@ -569,9 +575,9 @@ export default function EditCourse() {
               </div>
 
               {/* Category and Level */}
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                     Category <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -584,7 +590,7 @@ export default function EditCourse() {
                       if (errors.category)
                         setErrors({ ...errors, category: "" });
                     }}
-                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 rounded-lg sm:rounded-xl focus:outline-none transition ${
                       errors.category
                         ? "border-red-500 focus:border-red-500"
                         : "border-purple-100 focus:border-purple-600"
@@ -597,14 +603,14 @@ export default function EditCourse() {
                     ))}
                   </select>
                   {errors.category && (
-                    <p className="text-sm text-red-500 mt-1">
+                    <p className="text-xs sm:text-sm text-red-500 mt-1">
                       {errors.category}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                     Level
                   </label>
                   <select
@@ -612,7 +618,7 @@ export default function EditCourse() {
                     onChange={(e) =>
                       setCourseData({ ...courseData, level: e.target.value })
                     }
-                    className="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none">
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-purple-100 rounded-lg sm:rounded-xl focus:border-purple-600 focus:outline-none">
                     <option value="beginner">Beginner</option>
                     <option value="intermediate">Intermediate</option>
                     <option value="advanced">Advanced</option>
@@ -623,14 +629,14 @@ export default function EditCourse() {
 
               {/* Thumbnail Upload */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                   Course Thumbnail{" "}
                   {!courseData.thumbnail && (
                     <span className="text-red-500">*</span>
                   )}
                 </label>
                 <div
-                  className={`border-2 border-dashed rounded-xl p-8 transition ${
+                  className={`border-2 border-dashed rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 transition ${
                     errors.thumbnail ? "border-red-500" : "border-purple-200"
                   }`}>
                   {thumbnailPreview ? (
@@ -638,7 +644,7 @@ export default function EditCourse() {
                       <Image
                         src={thumbnailPreview}
                         alt="Thumbnail"
-                        className="w-full h-64 object-cover rounded-xl shadow-lg"
+                        className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-lg sm:rounded-xl shadow-lg"
                         width={512}
                         height={256}
                         unoptimized={true}
@@ -648,23 +654,23 @@ export default function EditCourse() {
                           setThumbnailFile(null);
                           setThumbnailPreview(null);
                         }}
-                        className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition">
-                        <X className="w-4 h-4" />
+                        className="absolute top-2 sm:top-4 right-2 sm:right-4 p-1.5 sm:p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition">
+                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   ) : (
                     <label className="flex flex-col items-center cursor-pointer">
-                      <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                        <Upload className="w-10 h-10 text-purple-600" />
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-purple-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                        <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600" />
                       </div>
-                      <span className="text-purple-600 font-semibold text-lg">
+                      <span className="text-purple-600 font-semibold text-base sm:text-lg text-center">
                         Click to upload new thumbnail
                       </span>
-                      <span className="text-sm text-gray-500 mt-2">
+                      <span className="text-xs sm:text-sm text-gray-500 mt-2 text-center">
                         or drag and drop
                       </span>
-                      <span className="text-xs text-gray-400 mt-4 px-4 py-2 bg-gray-50 rounded-full">
-                        PNG, JPG, GIF up to 5MB • Recommended size: 1280x720
+                      <span className="text-xs text-gray-400 mt-3 sm:mt-4 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-50 rounded-full text-center">
+                        PNG, JPG, GIF up to 5MB • 1280x720 recommended
                       </span>
                       <input
                         type="file"
@@ -676,8 +682,8 @@ export default function EditCourse() {
                   )}
                 </div>
                 {errors.thumbnail && (
-                  <p className="text-sm text-red-500 mt-2 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-xs sm:text-sm text-red-500 mt-2 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                     {errors.thumbnail}
                   </p>
                 )}
@@ -685,16 +691,16 @@ export default function EditCourse() {
 
               {/* Tags */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <Tag className="w-4 h-4 inline mr-1" />
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
+                  <Tag className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
                   Tags
                 </label>
-                <div className="flex gap-2 mb-3">
+                <div className="flex flex-col xs:flex-row gap-2 mb-3">
                   <input
                     type="text"
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
-                    className="flex-1 px-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none"
+                    className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-purple-100 rounded-lg sm:rounded-xl focus:border-purple-600 focus:outline-none"
                     placeholder="Add a tag (e.g., JavaScript, React)"
                     onKeyPress={(e) =>
                       e.key === "Enter" && (e.preventDefault(), addTag())
@@ -702,20 +708,20 @@ export default function EditCourse() {
                   />
                   <button
                     onClick={addTag}
-                    className="px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition font-medium">
+                    className="w-full xs:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-purple-600 text-white rounded-lg sm:rounded-xl hover:bg-purple-700 transition font-medium text-sm sm:text-base">
                     Add
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {courseData.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="flex items-center gap-1 px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm">
+                      className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-purple-50 text-purple-700 rounded-full text-xs sm:text-sm">
                       {tag}
                       <button
                         onClick={() => removeTag(tag)}
-                        className="hover:text-purple-900 ml-1">
-                        <X className="w-3 h-3" />
+                        className="hover:text-purple-900 ml-0.5">
+                        <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                       </button>
                     </span>
                   ))}
@@ -724,11 +730,13 @@ export default function EditCourse() {
 
               {/* Learning Objectives */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                   What students will learn
                 </label>
                 {courseData.objectives.map((objective, index) => (
-                  <div key={index} className="flex gap-2 mb-2">
+                  <div
+                    key={index}
+                    className="flex flex-col xs:flex-row gap-2 mb-2">
                     <input
                       type="text"
                       value={objective}
@@ -740,7 +748,7 @@ export default function EditCourse() {
                           objectives: newObjectives,
                         });
                       }}
-                      className="flex-1 px-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none"
+                      className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-purple-100 rounded-lg sm:rounded-xl focus:border-purple-600 focus:outline-none"
                       placeholder={`Learning objective ${index + 1}`}
                     />
                     <button
@@ -753,8 +761,8 @@ export default function EditCourse() {
                           objectives: newObjectives,
                         });
                       }}
-                      className="p-3 text-red-500 hover:bg-red-50 rounded-xl transition">
-                      <Trash2 className="w-5 h-5" />
+                      className="w-full xs:w-auto p-2 sm:p-3 text-red-500 hover:bg-red-50 rounded-lg sm:rounded-xl transition flex items-center justify-center">
+                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                   </div>
                 ))}
@@ -765,8 +773,8 @@ export default function EditCourse() {
                       objectives: [...courseData.objectives, ""],
                     })
                   }
-                  className="mt-2 text-purple-600 hover:text-purple-700 font-medium flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
+                  className="mt-2 text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                   Add Learning Objective
                 </button>
               </div>
@@ -774,182 +782,179 @@ export default function EditCourse() {
           )}
 
           {activeTab === "content" && (
-            <div className="space-y-6">
-              <div>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        Course Lessons
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Add lessons with titles and descriptions
-                      </p>
-                    </div>
-                    <button
-                      onClick={addLesson}
-                      className="bg-purple-600 text-white px-4 py-2.5 rounded-xl hover:bg-purple-700 transition flex items-center gap-2 font-medium shadow-sm hover:shadow">
-                      <Plus className="w-4 h-4" />
-                      Add Lesson
-                    </button>
-                  </div>
-
-                  {/* Lessons List */}
-                  <div className="space-y-4">
-                    {lessons.map((lesson, index) => (
-                      <div
-                        key={index}
-                        className="bg-white border-2 border-purple-100 rounded-xl p-5 hover:border-purple-300 transition group">
-                        {/* Lesson Header */}
-                        <div className="flex items-center gap-3 mb-4">
-                          <GripVertical className="w-5 h-5 text-gray-400 cursor-move" />
-                          <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
-                            Lesson {index + 1}
-                          </span>
-                          <span className="text-xs text-gray-400">•</span>
-                          <span className="text-xs text-gray-500">
-                            {lesson.type === "video"
-                              ? "Video Lesson"
-                              : "Article"}
-                          </span>
-                        </div>
-
-                        {/* Title Field */}
-                        <div className="space-y-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1.5">
-                              Lesson Title{" "}
-                              <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                              type="text"
-                              value={lesson.title}
-                              onChange={(e) => {
-                                const newLessons = [...lessons];
-                                newLessons[index].title = e.target.value;
-                                setLessons(newLessons);
-                              }}
-                              className="w-full px-4 py-2.5 border-2 border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-200 transition"
-                              placeholder="e.g., Introduction to the Course"
-                            />
-                          </div>
-
-                          {/* Description Field */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1.5">
-                              Lesson Description
-                            </label>
-                            <textarea
-                              value={lesson.description || ""}
-                              onChange={(e) => {
-                                const newLessons = [...lessons];
-                                newLessons[index].description = e.target.value;
-                                setLessons(newLessons);
-                              }}
-                              rows={2}
-                              className="w-full px-4 py-2.5 border-2 border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-200 transition resize-none"
-                              placeholder="Brief description of what this lesson covers..."
-                            />
-                          </div>
-
-                          {/* Lesson Options */}
-                          <div className="flex flex-wrap items-center gap-4 pt-2">
-                            {/* Duration */}
-                            <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-gray-400" />
-                              <input
-                                type="text"
-                                value={lesson.duration}
-                                onChange={(e) => {
-                                  const newLessons = [...lessons];
-                                  newLessons[index].duration = e.target.value;
-                                  setLessons(newLessons);
-                                }}
-                                className="w-20 px-2 py-1 border border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none text-sm"
-                                placeholder="10:30"
-                              />
-                              <span className="text-xs text-gray-400">min</span>
-                            </div>
-
-                            {/* Lesson Type */}
-                            <select
-                              value={lesson.type}
-                              onChange={(e) => {
-                                const newLessons = [...lessons];
-                                newLessons[index].type = e.target.value;
-                                setLessons(newLessons);
-                              }}
-                              className="px-3 py-1.5 border border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none text-sm">
-                              <option value="video">Video</option>
-                              <option value="article">Article</option>
-                              <option value="quiz">Quiz</option>
-                              <option value="assignment">Assignment</option>
-                            </select>
-
-                            {/* Move Up/Down Buttons */}
-                            <div className="flex items-center gap-1 ml-auto">
-                              <button
-                                onClick={() => moveLesson(index, "up")}
-                                disabled={index === 0}
-                                className="p-1.5 text-gray-500 hover:bg-purple-100 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent transition"
-                                title="Move up">
-                                <ChevronUp className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => moveLesson(index, "down")}
-                                disabled={index === lessons.length - 1}
-                                className="p-1.5 text-gray-500 hover:bg-purple-100 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent transition"
-                                title="Move down">
-                                <ChevronDown className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => removeLesson(index)}
-                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
-                                title="Delete lesson">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Empty State */}
-                  {lessons.length === 0 && (
-                    <div className="text-center py-12 bg-purple-50 rounded-xl border-2 border-dashed border-purple-200">
-                      <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Video className="w-8 h-8 text-purple-500" />
-                      </div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                        No lessons yet
-                      </h4>
-                      <p className="text-gray-500 mb-4">
-                        Start adding lessons to build your course content
-                      </p>
-                      <button
-                        onClick={addLesson}
-                        className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-2.5 rounded-xl hover:bg-purple-700 transition font-medium">
-                        <Plus className="w-4 h-4" />
-                        Add Your First Lesson
-                      </button>
-                    </div>
-                  )}
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-3 sm:gap-4">
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900">
+                    Course Lessons
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                    Add lessons with titles and descriptions
+                  </p>
                 </div>
+                <button
+                  onClick={addLesson}
+                  className="w-full xs:w-auto bg-purple-600 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-purple-700 transition flex items-center justify-center gap-1 sm:gap-2 font-medium text-sm shadow-sm hover:shadow">
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Add Lesson
+                </button>
               </div>
+
+              {/* Lessons List */}
+              <div className="space-y-3 sm:space-y-4">
+                {lessons.map((lesson, index) => (
+                  <div
+                    key={index}
+                    className="bg-white border-2 border-purple-100 rounded-lg sm:rounded-xl p-4 sm:p-5 hover:border-purple-300 transition group">
+                    {/* Lesson Header */}
+                    <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3 mb-3 sm:mb-4">
+                      <div className="flex items-center gap-2">
+                        <GripVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 cursor-move" />
+                        <span className="text-xs sm:text-sm font-medium text-purple-600 bg-purple-50 px-2 sm:px-3 py-1 rounded-full">
+                          Lesson {index + 1}
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-400 hidden xs:inline">
+                        •
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {lesson.type === "video" ? "Video Lesson" : "Article"}
+                      </span>
+                    </div>
+
+                    {/* Title Field */}
+                    <div className="space-y-3 sm:space-y-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Lesson Title <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={lesson.title}
+                          onChange={(e) => {
+                            const newLessons = [...lessons];
+                            newLessons[index].title = e.target.value;
+                            setLessons(newLessons);
+                          }}
+                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-200 transition"
+                          placeholder="e.g., Introduction to the Course"
+                        />
+                      </div>
+
+                      {/* Description Field */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Lesson Description
+                        </label>
+                        <textarea
+                          value={lesson.description || ""}
+                          onChange={(e) => {
+                            const newLessons = [...lessons];
+                            newLessons[index].description = e.target.value;
+                            setLessons(newLessons);
+                          }}
+                          rows={2}
+                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-200 transition resize-none"
+                          placeholder="Brief description of what this lesson covers..."
+                        />
+                      </div>
+
+                      {/* Lesson Options */}
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
+                        {/* Duration */}
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                          <input
+                            type="text"
+                            value={lesson.duration}
+                            onChange={(e) => {
+                              const newLessons = [...lessons];
+                              newLessons[index].duration = e.target.value;
+                              setLessons(newLessons);
+                            }}
+                            className="w-16 sm:w-20 px-1.5 sm:px-2 py-1 border border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none text-xs sm:text-sm"
+                            placeholder="10:30"
+                          />
+                          <span className="text-xs text-gray-400">min</span>
+                        </div>
+
+                        {/* Lesson Type */}
+                        <select
+                          value={lesson.type}
+                          onChange={(e) => {
+                            const newLessons = [...lessons];
+                            newLessons[index].type = e.target.value;
+                            setLessons(newLessons);
+                          }}
+                          className="px-2 sm:px-3 py-1 sm:py-1.5 border border-purple-100 rounded-lg focus:border-purple-600 focus:outline-none text-xs sm:text-sm">
+                          <option value="video">Video</option>
+                          <option value="article">Article</option>
+                          <option value="quiz">Quiz</option>
+                          <option value="assignment">Assignment</option>
+                        </select>
+
+                        {/* Move Up/Down Buttons */}
+                        <div className="flex items-center gap-1 ml-auto">
+                          <button
+                            onClick={() => moveLesson(index, "up")}
+                            disabled={index === 0}
+                            className="p-1 sm:p-1.5 text-gray-500 hover:bg-purple-100 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent transition"
+                            title="Move up">
+                            <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </button>
+                          <button
+                            onClick={() => moveLesson(index, "down")}
+                            disabled={index === lessons.length - 1}
+                            className="p-1 sm:p-1.5 text-gray-500 hover:bg-purple-100 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent transition"
+                            title="Move down">
+                            <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </button>
+                          <button
+                            onClick={() => removeLesson(index)}
+                            className="p-1 sm:p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
+                            title="Delete lesson">
+                            <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Empty State */}
+              {lessons.length === 0 && (
+                <div className="text-center py-8 sm:py-12 bg-purple-50 rounded-lg sm:rounded-xl border-2 border-dashed border-purple-200">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Video className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
+                  </div>
+                  <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+                    No lessons yet
+                  </h4>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-4 px-4">
+                    Start adding lessons to build your course content
+                  </p>
+                  <button
+                    onClick={addLesson}
+                    className="inline-flex items-center gap-1 sm:gap-2 bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-purple-700 transition font-medium text-sm">
+                    <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                    Add Your First Lesson
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
           {activeTab === "pricing" && (
-            <div className="max-w-2xl space-y-8">
+            <div className="max-w-2xl space-y-6 sm:space-y-8">
               {/* Price Type */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-4">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-3 sm:mb-4">
                   Course Type
                 </label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
                   <label
-                    className={`p-6 border-2 rounded-xl cursor-pointer transition ${
+                    className={`p-4 sm:p-6 border-2 rounded-lg sm:rounded-xl cursor-pointer transition ${
                       !courseData.isFree
                         ? "border-purple-600 bg-purple-50"
                         : "border-purple-100 hover:border-purple-300"
@@ -967,12 +972,12 @@ export default function EditCourse() {
                       className="sr-only"
                     />
                     <DollarSign
-                      className={`w-8 h-8 mx-auto mb-2 ${
+                      className={`w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 ${
                         !courseData.isFree ? "text-purple-600" : "text-gray-400"
                       }`}
                     />
                     <p
-                      className={`font-semibold text-center ${
+                      className={`font-semibold text-xs sm:text-base text-center ${
                         !courseData.isFree ? "text-purple-600" : "text-gray-600"
                       }`}>
                       Paid Course
@@ -980,7 +985,7 @@ export default function EditCourse() {
                   </label>
 
                   <label
-                    className={`p-6 border-2 rounded-xl cursor-pointer transition ${
+                    className={`p-4 sm:p-6 border-2 rounded-lg sm:rounded-xl cursor-pointer transition ${
                       courseData.isFree
                         ? "border-purple-600 bg-purple-50"
                         : "border-purple-100 hover:border-purple-300"
@@ -989,21 +994,17 @@ export default function EditCourse() {
                       type="radio"
                       checked={courseData.isFree}
                       onChange={() =>
-                        setCourseData({
-                          ...courseData,
-                          isFree: true,
-                          price: 0,
-                        })
+                        setCourseData({ ...courseData, isFree: true, price: 0 })
                       }
                       className="sr-only"
                     />
                     <Tag
-                      className={`w-8 h-8 mx-auto mb-2 ${
+                      className={`w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 ${
                         courseData.isFree ? "text-purple-600" : "text-gray-400"
                       }`}
                     />
                     <p
-                      className={`font-semibold text-center ${
+                      className={`font-semibold text-xs sm:text-base text-center ${
                         courseData.isFree ? "text-purple-600" : "text-gray-600"
                       }`}>
                       Free Course
@@ -1015,11 +1016,11 @@ export default function EditCourse() {
               {/* Price Input */}
               {!courseData.isFree && (
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                     Price (USD) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative max-w-xs">
-                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                     <input
                       type="number"
                       value={courseData.price}
@@ -1029,7 +1030,7 @@ export default function EditCourse() {
                           price: parseFloat(e.target.value),
                         })
                       }
-                      className="w-full pl-12 pr-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-600 focus:outline-none"
+                      className="w-full pl-8 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-purple-100 rounded-lg sm:rounded-xl focus:border-purple-600 focus:outline-none"
                       placeholder="49.99"
                       min="0"
                       step="0.01"
@@ -1039,20 +1040,20 @@ export default function EditCourse() {
               )}
 
               {/* Pricing Tips */}
-              <div className="bg-linear-to-br from-purple-50 to-white p-6 rounded-xl border border-purple-100">
-                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-purple-600" />
+              <div className="bg-linear-to-br from-purple-50 to-white p-4 sm:p-6 rounded-lg sm:rounded-xl border border-purple-100">
+                <h4 className="font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-1 sm:gap-2 text-sm sm:text-base">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                   Pricing Tips
                 </h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
+                  <li className="flex items-start gap-1 sm:gap-2">
+                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 mt-0.5 shrink-0" />
                     <span>
                       Courses with video content typically sell better at $49-99
                     </span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                  <li className="flex items-start gap-1 sm:gap-2">
+                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 mt-0.5 shrink-0" />
                     <span>
                       Free courses can help build your audience and get reviews
                     </span>
