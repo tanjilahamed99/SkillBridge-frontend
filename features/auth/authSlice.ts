@@ -1,5 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+// Define interface for enrollment data
+export interface EnrollmentData {
+  courseId: string;
+  _id?: string;
+  enrolledAt: string | Date;
+  status: "active" | "completed" | "dropped";
+  progress: number;
+  completedLessons: string[];
+  paymentStatus: "pending" | "completed" | "failed" | "refunded";
+  paymentAmount: number;
+  lastAccessed?: string | Date;
+  completedAt?: string | Date;
+  grade?: string;
+}
+
 export interface CourseReference {
   _id: string;
   courseId?: string;
@@ -20,7 +35,8 @@ export interface User {
   picture?: string | null;
   qualification?: string;
   bio?: string;
-  enrolledCourses?: Array<string | { _id: string }>;
+  // Updated to accept full enrollment objects
+  enrolledCourses?: Array<string | EnrollmentData | { _id: string }>;
   createdCourses?: Array<string | CourseReference>;
 }
 

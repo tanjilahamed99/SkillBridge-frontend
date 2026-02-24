@@ -78,7 +78,7 @@ export default function StudentLayout({
           {/* Sidebar Header */}
           <div className="h-20 flex items-center justify-between px-6 border-b border-purple-100">
             <Link
-              href="/student/dashboard"
+              href="/"
               className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-xl">S</span>
