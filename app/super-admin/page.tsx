@@ -9,13 +9,6 @@ import {
   Activity,
   ArrowUp,
   ArrowDown,
-  Download,
-  Clock,
-  CheckCircle,
-  UserPlus,
-  Video,
-  Award,
-  Settings,
 } from "lucide-react";
 import { superAdminAnalysis } from "@/actions/superAdmin";
 
@@ -102,43 +95,6 @@ export default function SuperAdminDashboard() {
     },
   ];
 
-  const recentActivities = [
-    {
-      user: "John Doe",
-      action: "enrolled in",
-      target: "Web Development",
-      time: "2 minutes ago",
-      type: "enrollment",
-    },
-    {
-      user: "Sarah Chen",
-      action: "completed",
-      target: "UI/UX Design",
-      time: "15 minutes ago",
-      type: "completion",
-    },
-    {
-      user: "Mike Ross",
-      action: "published",
-      target: "Advanced JavaScript",
-      time: "1 hour ago",
-      type: "publication",
-    },
-    {
-      user: "Emma Watson",
-      action: "created",
-      target: "Data Science Course",
-      time: "3 hours ago",
-      type: "creation",
-    },
-    {
-      user: "Tom Hardy",
-      action: "submitted",
-      target: "Assignment",
-      time: "5 hours ago",
-      type: "submission",
-    },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
