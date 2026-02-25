@@ -1,27 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import {
   Search,
   Filter,
-  Eye,
-  Trash2,
   CheckCircle,
   XCircle,
   Clock,
   DollarSign,
-  Star,
   Calendar,
   Archive,
   Download,
-  MoreHorizontal,
   AlertCircle,
   BookOpen,
 } from "lucide-react";
 import { getCourses, updateCourseStatus } from "@/actions/admin";
 import { toast } from "sonner";
+
+type CourseStatus = "published" | "pending" | "draft" | "archived" | "rejected";
 
 interface Course {
   _id: string;
@@ -75,14 +72,18 @@ export default function AdminCoursesPage() {
     }
   };
 
-  const handleStatusChange = async (courseId: string, newStatus: string) => {
+  const handleStatusChange = async (
+    courseId: string,
+    newStatus: CourseStatus,
+  ) => {
     try {
       const newStat = { status: newStatus };
       const { data } = await updateCourseStatus(courseId, newStat);
+
       if (data.success) {
         setCourses(
           courses.map((c) =>
-            c._id === courseId ? { ...c, status: newStatus as any } : c,
+            c._id === courseId ? { ...c, status: newStatus } : c,
           ),
         );
         toast.success(`Course ${newStatus}`);
@@ -90,25 +91,6 @@ export default function AdminCoursesPage() {
     } catch (error) {
       console.error("Error updating course:", error);
       toast.error("Failed to update course");
-    }
-  };
-
-  const handleArchiveCourse = async (courseId: string) => {
-    if (window.confirm("Are you sure you want to archive this course?")) {
-      try {
-        const { data } = await archiveCourse(courseId);
-        if (data.success) {
-          setCourses(
-            courses.map((c) =>
-              c._id === courseId ? { ...c, status: "archived" } : c,
-            ),
-          );
-          toast.success("Course archived");
-        }
-      } catch (error) {
-        console.error("Error archiving course:", error);
-        toast.error("Failed to archive course");
-      }
     }
   };
 
@@ -385,26 +367,22 @@ export default function AdminCoursesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      {course.status === "pending" && (
-                        <>
-                          <button
-                            onClick={() =>
-                              handleStatusChange(course._id, "published")
-                            }
-                            className="p-1.5 hover:bg-green-100 rounded-lg transition"
-                            title="Approve">
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleStatusChange(course._id, "rejected")
-                            }
-                            className="p-1.5 hover:bg-red-100 rounded-lg transition"
-                            title="Reject">
-                            <XCircle className="w-4 h-4 text-red-600" />
-                          </button>
-                        </>
-                      )}
+                      <button
+                        onClick={() =>
+                          handleStatusChange(course._id, "published")
+                        }
+                        className="p-1.5 hover:bg-green-100 rounded-lg transition"
+                        title="Approve">
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleStatusChange(course._id, "rejected")
+                        }
+                        className="p-1.5 hover:bg-red-100 rounded-lg transition"
+                        title="Reject">
+                        <XCircle className="w-4 h-4 text-red-600" />
+                      </button>
 
                       {course.status !== "archived" && (
                         <button
