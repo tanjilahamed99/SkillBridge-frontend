@@ -29,7 +29,7 @@ const Navbar = () => {
           
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200 group-hover:scale-110 transition">
+            <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200 group-hover:scale-110 transition">
               <Logo />
             </div>
             <span className="font-bold text-2xl text-gray-900">

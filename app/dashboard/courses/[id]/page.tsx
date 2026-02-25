@@ -97,7 +97,6 @@ export default function CourseLearningPage() {
     return [];
   };
 
-
   const saveCompletedLessons = (courseId: string, completed: number[]) => {
     if (typeof window !== "undefined") {
       try {
@@ -205,7 +204,6 @@ export default function CourseLearningPage() {
     fetchCourseData();
   }, [courseId]);
 
-
   useEffect(() => {
     if (lessons.length > 0) {
       const newProgress = Math.round(
@@ -219,7 +217,6 @@ export default function CourseLearningPage() {
       }
     }
   }, [completedLessons, lessons.length, courseId]);
-
 
   const handleCompleteLesson = async (lessonOrder: number) => {
     // Check if courseId is valid
@@ -312,7 +309,6 @@ export default function CourseLearningPage() {
     setCompletedLessons(newCompleted);
   };
 
-
   const goToNextLesson = () => {
     if (!currentLesson || lessons.length === 0) return;
 
@@ -385,12 +381,6 @@ export default function CourseLearningPage() {
           <div className="flex items-center justify-between h-16">
             {/* Left section - Course Title and Menu */}
             <div className="flex items-center gap-4">
-              <button
-                onClick={toggleSidebar}
-                className="p-2 hover:bg-purple-50 rounded-lg transition lg:hidden"
-                aria-label="Toggle sidebar">
-                <Menu className="w-5 h-5 text-gray-600" />
-              </button>
               <h1 className="text-lg font-semibold text-gray-900 truncate max-w-37.5 sm:max-w-75">
                 {course.title}
               </h1>
@@ -407,11 +397,6 @@ export default function CourseLearningPage() {
                 {progress}% Complete
               </span>
             </div>
-
-            {/* Right section - User Avatar */}
-            <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-purple-700 rounded-lg flex items-center justify-center text-white font-semibold">
-              {user?.name?.charAt(0) || "S"}
-            </div>
           </div>
 
           {/* Mobile progress bar */}
@@ -427,78 +412,7 @@ export default function CourseLearningPage() {
             </div>
           </div>
         </div>
-      </header>
-
-      {/* Mobile Sidebar Dropdown */}
-      {isMobile && showSidebar && (
-        <div className="lg:hidden bg-white border-b border-purple-100 p-4 max-h-80 overflow-y-auto">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-gray-900">Course Content</h2>
-            <button
-              onClick={() => setShowSidebar(false)}
-              className="p-1 hover:bg-purple-50 rounded-lg transition">
-              <X className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
-
-          {/* Course info */}
-          <div className="bg-purple-50 rounded-lg p-3 mb-3">
-            <h3 className="font-medium text-gray-900 mb-1 line-clamp-2">
-              {course.title}
-            </h3>
-            <p className="text-xs text-gray-500">
-              {lessons.length} lessons • {progress}% complete
-            </p>
-          </div>
-
-          {/* Lessons list */}
-          <div className="space-y-1">
-            {lessons.map((lesson, index) => {
-              const isCompleted = completedLessons.includes(lesson.order);
-              const isCurrent = currentLesson?.order === lesson.order;
-
-              return (
-                <button
-                  key={lesson.order}
-                  onClick={() => selectLesson(lesson)}
-                  className={`w-full text-left p-3 rounded-lg hover:bg-purple-50 transition ${
-                    isCurrent ? "bg-purple-50" : ""
-                  }`}>
-                  <div className="flex items-start gap-3">
-                    <div className="shrink-0 mt-0.5">
-                      {isCompleted ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <Circle className="w-4 h-4 text-gray-300" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className={`text-sm font-medium ${
-                          isCompleted
-                            ? "text-gray-500 line-through"
-                            : isCurrent
-                              ? "text-purple-700"
-                              : "text-gray-900"
-                        }`}>
-                        {index + 1}. {lesson.title}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                        {lesson.type === "video" ? (
-                          <Video className="w-3 h-3" />
-                        ) : (
-                          <FileText className="w-3 h-3" />
-                        )}
-                        <span>{lesson.duration}</span>
-                      </div>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      </header> 
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
