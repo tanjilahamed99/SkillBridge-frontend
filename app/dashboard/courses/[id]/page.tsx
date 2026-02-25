@@ -84,6 +84,8 @@ export default function CourseLearningPage() {
 
   const user = useAppSelector((state) => state.auth.user);
 
+  console.log(courseId);
+
   const loadCompletedLessons = (courseId: string): number[] => {
     if (typeof window !== "undefined") {
       try {
@@ -132,7 +134,6 @@ export default function CourseLearningPage() {
       setLoading(true);
       try {
         const { data } = await getCourseData(courseId);
-
         if (data.success) {
           // Set course data
           setCourse(data.courseData);
@@ -336,10 +337,6 @@ export default function CourseLearningPage() {
     if (isMobile) setShowSidebar(false);
   };
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -412,7 +409,7 @@ export default function CourseLearningPage() {
             </div>
           </div>
         </div>
-      </header> 
+      </header>
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">

@@ -13,6 +13,10 @@ export const enrollInCourse = (courseId: string) => {
   return API.post(`/api/student/enroll/${courseId}`);
 };
 
+export const getStudentStats = () => {
+  return API.get(`/api/student/stats`);
+};
+
 export const updateLessonStatus = (courseId: string, data: (string | EnrollmentData | { _id: string; })[]) => {
   return API.put(`/api/student/course/lesson/${courseId}`, data);
 };

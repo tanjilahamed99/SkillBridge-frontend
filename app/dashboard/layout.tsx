@@ -1,16 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  X,
-  Home,
-  BookOpen,
-  LogOut,
-  GraduationCap,
-} from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useDispatch";
+import { Menu, X, Home, BookOpen, LogOut } from "lucide-react";
+import { useAppSelector } from "@/hooks/useDispatch";
+import Logo from "@/components/Logo";
+import { useDispatch } from "react-redux";
 import { logout } from "@/features/auth/authSlice";
 import { toast } from "sonner";
 import StudentPrivateRoute from "@/providers/StudentPrivateRoute";
@@ -23,41 +19,40 @@ export default function StudentLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
   const router = useRouter();
+
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "My Courses", href: "/dashboard/courses", icon: BookOpen },
   ];
 
-  const recentCourses = [
-    {
-      id: 1,
-      title: "Complete Web Development",
-      progress: 68,
-      color: "from-blue-500 to-purple-600",
-    },
-    {
-      id: 2,
-      title: "UI/UX Design Masterclass",
-      progress: 42,
-      color: "from-purple-500 to-pink-600",
-    },
-    {
-      id: 3,
-      title: "Data Science & AI",
-      progress: 25,
-      color: "from-green-500 to-purple-600",
-    },
-  ];
-
-  const dispatch = useAppDispatch();
-
   const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
     router.push("/login");
     toast.success("Logged out successfully");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    dispatch(logout());
   };
+
+  useEffect(() => {
+    // Redirect if not authenticated
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
+
+  // Show loading state while checking authentication
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <StudentPrivateRoute>
@@ -81,7 +76,7 @@ export default function StudentLayout({
               href="/"
               className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">S</span>
+                <Logo />
               </div>
               <span className="font-bold text-xl text-gray-900">
                 Skill<span className="text-purple-600">Bridge</span>
@@ -94,21 +89,20 @@ export default function StudentLayout({
             </button>
           </div>
 
-          {/* Student Profile Summary */}
+          {/* Instructor Profile */}
           <div className="p-6 border-b border-purple-100">
             <div className="flex items-center space-x-4">
               <div className="w-14 h-14 bg-linear-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
-                {user?.name?.charAt(0).toUpperCase()}
+                {user?.name
+                  ? user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                  : "SJ"}
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900">{user?.name}</h3>
                 <p className="text-sm text-gray-500">Student</p>
-                <div className="flex items-center mt-1">
-                  <GraduationCap className="w-3 h-3 text-purple-600 mr-1" />
-                  <span className="text-xs text-purple-600">
-                    5 Courses Enrolled
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -136,40 +130,6 @@ export default function StudentLayout({
                 );
               })}
             </ul>
-
-            {/* Recent Courses Section */}
-            <div className="mt-8">
-              <h4 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                Recent Courses
-              </h4>
-              <ul className="space-y-2">
-                {recentCourses.map((course) => (
-                  <li key={course.id}>
-                    <Link
-                      href={`/student/course/${course.id}`}
-                      className="flex items-center px-4 py-2 hover:bg-purple-50 rounded-xl transition">
-                      <div
-                        className={`w-2 h-2 rounded-full bg-linear-to-r ${course.color} mr-3`}></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-700 truncate">
-                          {course.title}
-                        </p>
-                        <div className="flex items-center mt-1">
-                          <div className="w-20 h-1 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full bg-linear-to-r ${course.color}`}
-                              style={{ width: `${course.progress}%` }}></div>
-                          </div>
-                          <span className="text-xs text-gray-500 ml-2">
-                            {course.progress}%
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </nav>
 
           {/* Logout Button */}
@@ -185,6 +145,22 @@ export default function StudentLayout({
 
         {/* Main Content */}
         <div className="lg:pl-72">
+          {/* Header */}
+          <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-purple-100">
+            <div className="flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="lg:hidden text-gray-600 hover:text-purple-600">
+                  <Menu className="w-6 h-6" />
+                </button>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Student Portal
+                </h2>
+              </div>
+            </div>
+          </header>
+
           {/* Page Content */}
           <main className="p-4 sm:p-6 lg:p-8">{children}</main>
         </div>
