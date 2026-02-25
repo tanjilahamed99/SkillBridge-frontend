@@ -10,7 +10,6 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Download,
 } from "lucide-react";
 import { getUsers, updateUserStatus } from "@/actions/admin";
 import { toast } from "sonner";

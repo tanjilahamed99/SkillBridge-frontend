@@ -6,17 +6,14 @@ export const getUsers = () => {
 export const updateUserStatus = (userId: string, data: object) => {
   return API.put(`/api/admin/user/${userId}`, data);
 };
-export const deleteUser = () => {
-  return API.post("/api/auth/login");
-};
 export const getAdminDashboard = () => {
   return API.post("/api/auth/login");
 };
 export const getCourses = () => {
-  return API.post("/api/auth/login");
+  return API.get("/api/admin/course");
 };
-export const updateCourseStatus = () => {
-  return API.post("/api/auth/login");
+export const updateCourseStatus = (courseId: string, data: object) => {
+  return API.put(`/api/admin/course/${courseId}`, data);
 };
 export const getAdminAnalytics = () => {
   return API.post("/api/admin/analysis");
