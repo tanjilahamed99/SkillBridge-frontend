@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define interface for enrollment data
 export interface EnrollmentData {
-  courseId: string;
   _id?: string;
   enrolledAt: string | Date;
   status: "active" | "completed" | "dropped";
@@ -13,6 +12,7 @@ export interface EnrollmentData {
   lastAccessed?: string | Date;
   completedAt?: string | Date;
   grade?: string;
+  courseId: string;
 }
 
 export interface CourseReference {

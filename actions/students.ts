@@ -1,3 +1,4 @@
+import { EnrollmentData } from "@/features/auth/authSlice";
 import API from "@/lib/axios";
 
 export const getAllCourse = () => {
@@ -10,4 +11,8 @@ export const getCourseData = (id: string) => {
 
 export const enrollInCourse = (courseId: string) => {
   return API.post(`/api/student/enroll/${courseId}`);
+};
+
+export const updateLessonStatus = (courseId: string, data: (string | EnrollmentData | { _id: string; })[]) => {
+  return API.put(`/api/student/course/lesson/${courseId}`, data);
 };

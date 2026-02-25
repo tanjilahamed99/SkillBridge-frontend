@@ -43,13 +43,7 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-lg mb-6">Platform</h4>
             <ul className="space-y-4">
-              {[
-                "Courses",
-                "Features",
-                "Pricing",
-                "Instructors",
-                "Enterprise",
-              ].map((item) => (
+              {["Courses", "Features"].map((item) => (
                 <li key={item}>
                   <Link
                     href={`/${item.toLowerCase()}`}
@@ -65,7 +59,7 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-lg mb-6">Company</h4>
             <ul className="space-y-4">
-              {["About", "Careers", "Blog", "Press", "Contact"].map((item) => (
+              {["About", "Contact"].map((item) => (
                 <li key={item}>
                   <Link
                     href={`/${item.toLowerCase()}`}
@@ -81,13 +75,7 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-lg mb-6">Legal</h4>
             <ul className="space-y-4">
-              {[
-                "Privacy Policy",
-                "Terms-of-Service",
-                "Security",
-                "Cookie Policy",
-                "Accessibility",
-              ].map((item) => (
+              {["Privacy Policy", "Terms-of-Service"].map((item) => (
                 <li key={item}>
                   <Link
                     href={`/${item.toLowerCase().replace(" ", "-")}`}
@@ -104,14 +92,11 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-400">
           <p>&copy; 2024 SkillBridge. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link href="/sitemap" className="hover:text-purple-400 transition">
-              Sitemap
-            </Link>
-            <Link href="/privacy" className="hover:text-purple-400 transition">
+            <Link href="/privacy-policy" className="hover:text-purple-400 transition">
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-purple-400 transition">
-              Terms
+            <Link href="/terms-of-service" className="hover:text-purple-400 transition">
+              Terms of Service
             </Link>
           </div>
         </div>
