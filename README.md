@@ -16,9 +16,9 @@ It is built using Next.js 15 with App Router and follows modern frontend best pr
 
 ## 🌐 Live Demo & Repository
 
-- 🔗 Frontend: https://skillbridge.vercel.app  
-- 🔗 Backend API: https://skillbridge-api.onrender.com  
-- 🔗 GitHub: https://github.com/yourusername/skillbridge-frontend  
+- 🔗 Frontend: https://skillbrige.vercel.app
+- 🔗 Backend API: https://skillbrige-backend.onrender.com/
+- 🔗 GitHub: https://github.com/tanjilahamed99/SkillBridge-frontend  
 
 ---
 
@@ -96,7 +96,6 @@ src/
 ├── hooks/            # Custom React hooks
 ├── lib/              # Utilities and API clients
 ├── store/            # Redux state management
-└── styles/           # Global styles
 ```
 
 ---
@@ -113,20 +112,6 @@ src/
 
 ---
 
-# 📱 Responsive Design
-
-- Mobile-first design
-- Works on mobile, tablet, and desktop
-
-### Breakpoints
-
-- Mobile: < 640px  
-- Tablet: 640px – 1024px  
-- Desktop: > 1024px  
-
-Adaptive layouts for each screen size.
-
----
 
 # 🌐 API Integration
 
@@ -169,11 +154,6 @@ const API_BASE_URL =
     currentCourse: null,
     filters: {}
   },
-  ui: {
-    theme: 'light',
-    sidebarOpen: false,
-    notifications: []
-  }
 }
 ```
 
@@ -222,21 +202,6 @@ User Action
 
 ---
 
-# 📦 Key Dependencies
-
-```json
-{
-  "next": "^15.0.0",
-  "react": "^18.2.0",
-  "redux": "^5.0.0",
-  "@reduxjs/toolkit": "^2.0.0",
-  "tailwindcss": "^3.3.0",
-  "typescript": "^5.0.0",
-  "react-hook-form": "^7.0.0",
-  "zod": "^3.22.0",
-  "lucide-react": "^0.300.0"
-}
-```
 
 ---
 
@@ -299,26 +264,6 @@ npm run format   # Run Prettier
 
 ---
 
-# 📈 Performance Optimizations
-
-- Next.js Image optimization
-- Code splitting
-- Lazy loading
-- Static generation where possible
-- Client-side caching
-- Debounced search
-- Infinite scroll
-
----
-
-# 🧪 Testing Strategy
-
-- Unit Tests (Jest)
-- Integration Tests (React Testing Library)
-- E2E Tests (Cypress - optional)
-- Manual cross-browser testing
-
----
 
 # 🚀 Deployment
 
@@ -335,33 +280,3 @@ Output directory: `.next`
 ```bash
 vercel --prod
 ```
-
-## Deploy to Netlify
-
-```bash
-netlify deploy --prod
-```
-
----
-
-# 🤝 Contributing
-
-1. Fork repository  
-2. Create feature branch  
-3. Commit changes  
-4. Push to branch  
-5. Open Pull Request  
-
----
-
-# 📞 Support
-
-- Documentation: docs.skillbridge.com  
-- Issues: GitHub Issues  
-- Email: support@skillbridge.com  
-
----
-
-# 📄 License
-
-This project is for educational and portfolio purposes.
