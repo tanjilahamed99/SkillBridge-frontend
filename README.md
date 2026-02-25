@@ -14,6 +14,13 @@ It is built using Next.js 15 with App Router and follows modern frontend best pr
 
 ---
 
+## 🌐 higher authority email password
+
+-  super-admin: super@gmail.com || 123456
+-  admin: admin@gmail.com || 123456
+
+
+
 ## 🌐 Live Demo & Repository
 
 - 🔗 Frontend: https://skillbrige.vercel.app

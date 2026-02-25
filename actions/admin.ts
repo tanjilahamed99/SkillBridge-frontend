@@ -16,5 +16,5 @@ export const updateCourseStatus = (courseId: string, data: object) => {
   return API.put(`/api/admin/course/${courseId}`, data);
 };
 export const getAdminAnalytics = () => {
-  return API.post("/api/admin/analysis");
+  return API.get("/api/admin/analysis");
 };

@@ -11,9 +11,7 @@ import {
   DollarSign,
   Calendar,
   Archive,
-  Download,
   AlertCircle,
-  BookOpen,
 } from "lucide-react";
 import { getCourses, updateCourseStatus } from "@/actions/admin";
 import { toast } from "sonner";
@@ -166,16 +164,6 @@ export default function AdminCoursesPage() {
           <p className="text-sm sm:text-base text-gray-500 mt-1">
             Manage all courses on the platform
           </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2 text-sm">
-            <BookOpen className="w-4 h-4" />
-            Add Course
-          </button>
-          <button className="p-2 border border-purple-200 rounded-lg hover:bg-purple-50 transition">
-            <Download className="w-5 h-5 text-gray-600" />
-          </button>
         </div>
       </div>
 

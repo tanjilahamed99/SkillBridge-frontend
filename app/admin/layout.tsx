@@ -47,43 +47,43 @@ export default function AdminLayout({
   }
 
   const navigation: NavItem[] = [
-    { 
-      name: "Dashboard", 
-      href: "/admin", 
+    {
+      name: "Dashboard",
+      href: "/admin",
       icon: LayoutDashboard,
-      exact: true 
+      exact: true,
     },
-    { 
-      name: "Users", 
-      href: "/admin/users", 
+    {
+      name: "Users",
+      href: "/admin/users",
       icon: Users,
       submenu: [
         { name: "All Users", href: "/admin/users" },
         { name: "Instructors", href: "/admin/users?role=instructor" },
         { name: "Students", href: "/admin/users?role=student" },
-      ]
+      ],
     },
-    { 
-      name: "Courses", 
-      href: "/admin/courses", 
+    {
+      name: "Courses",
+      href: "/admin/courses",
       icon: BookOpen,
       submenu: [
         { name: "All Courses", href: "/admin/courses" },
         { name: "Pending Review", href: "/admin/courses?status=pending" },
         { name: "Archived", href: "/admin/courses?status=archived" },
-      ]
-    }
+      ],
+    },
   ];
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push('/login');
+    router.push("/login");
     toast.success("Logged out successfully");
   };
 
   const isActive = (href: string): boolean => {
     if (!pathname) return false;
-    if (href === '/admin') {
+    if (href === "/admin") {
       return pathname === href;
     }
     return pathname.startsWith(href);
@@ -94,17 +94,17 @@ export default function AdminLayout({
     if (user?.name && user.name.length > 0) {
       return user.name.charAt(0).toUpperCase();
     }
-    return 'A';
+    return "A";
   };
 
   // Get user name safely
   const getUserName = (): string => {
-    return user?.name || 'Admin';
+    return user?.name || "Admin";
   };
 
   // Get user email safely
   const getUserEmail = (): string => {
-    return user?.email || 'admin@skillbridge.com';
+    return user?.email || "admin@skillbridge.com";
   };
 
   return (
@@ -121,23 +121,23 @@ export default function AdminLayout({
       <aside
         className={`fixed top-0 left-0 z-50 h-full w-72 bg-white border-r border-purple-100 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
+        }`}>
         {/* Sidebar Header */}
         <div className="h-20 flex items-center justify-between px-6 border-b border-purple-100">
           <Link href="/admin" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="font-bold text-xl text-gray-900">Skill<span className="text-purple-600">Bridge</span></span>
+              <span className="font-bold text-xl text-gray-900">
+                Skill<span className="text-purple-600">Bridge</span>
+              </span>
               <p className="text-xs text-purple-600 font-medium">Admin Panel</p>
             </div>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-gray-500 hover:text-gray-700"
-          >
+            className="lg:hidden text-gray-500 hover:text-gray-700">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -145,11 +145,13 @@ export default function AdminLayout({
         {/* Admin Profile */}
         <div className="p-6 border-b border-purple-100">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
+            <div className="w-14 h-14 bg-linear-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
               {getUserInitial()}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 truncate">{getUserName()}</h3>
+              <h3 className="font-semibold text-gray-900 truncate">
+                {getUserName()}
+              </h3>
               <p className="text-sm text-gray-500 truncate">{getUserEmail()}</p>
               <div className="flex items-center mt-1">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
@@ -172,8 +174,7 @@ export default function AdminLayout({
                       active
                         ? "bg-purple-600 text-white"
                         : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
-                    }`}
-                  >
+                    }`}>
                     <item.icon className="w-5 h-5" />
                     <span className="font-medium">{item.name}</span>
                   </Link>
@@ -187,8 +188,7 @@ export default function AdminLayout({
         <div className="p-4 border-t border-purple-100">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition"
-          >
+            className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition">
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
           </button>
@@ -203,24 +203,27 @@ export default function AdminLayout({
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-600 hover:text-purple-600"
-              >
+                className="lg:hidden text-gray-600 hover:text-purple-600">
                 <Menu className="w-6 h-6" />
               </button>
-              
+
               {/* Breadcrumb */}
               <div className="hidden md:flex items-center text-sm">
-                <Link href="/admin" className="text-gray-500 hover:text-purple-600">Dashboard</Link>
-                {pathname && pathname !== '/admin' && (
+                <Link
+                  href="/admin"
+                  className="text-gray-500 hover:text-purple-600">
+                  Dashboard
+                </Link>
+                {pathname && pathname !== "/admin" && (
                   <>
                     <span className="mx-2 text-gray-400">/</span>
                     <span className="text-gray-900 capitalize">
-                      {pathname.split('/').pop()?.replace(/-/g, ' ') || ''}
+                      {pathname.split("/").pop()?.replace(/-/g, " ") || ""}
                     </span>
                   </>
                 )}
               </div>
-            </div> 
+            </div>
           </div>
 
           {/* Mobile Search */}
@@ -237,9 +240,7 @@ export default function AdminLayout({
         </header>
 
         {/* Page Content */}
-        <main className="p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
+        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );
